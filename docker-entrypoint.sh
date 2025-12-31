@@ -1,5 +1,15 @@
+#!/bin/sh
+set -e
+
+# Use Railway's PORT or default to 80
+PORT=${PORT:-80}
+
+echo "Starting nginx on port $PORT"
+
+# Create nginx config with the correct port
+cat > /etc/nginx/conf.d/default.conf <<EOF
 server {
-    listen 80;
+    listen $PORT;
     server_name localhost;
     root /usr/share/nginx/html;
     index index.html;
@@ -15,7 +25,7 @@ server {
 
     # Handle client-side routing (React Router)
     location / {
-        try_files $uri $uri/ /index.html;
+        try_files \$uri \$uri/ /index.html;
     }
 
     # Cache static assets
@@ -29,3 +39,9 @@ server {
         add_header Cache-Control "no-cache, no-store, must-revalidate";
     }
 }
+EOF
+
+echo "Nginx configured to listen on port $PORT"
+
+# Start nginx
+exec nginx -g "daemon off;"

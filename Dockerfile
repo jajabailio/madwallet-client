@@ -30,11 +30,12 @@ FROM nginx:alpine AS runner
 # Copy built static files
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy nginx config
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy entrypoint script
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 
-# Expose port 80 (Railway will map to $PORT)
+# Railway will set PORT dynamically
 EXPOSE 80
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Use custom entrypoint that configures nginx with Railway's PORT
+ENTRYPOINT ["/docker-entrypoint.sh"]
