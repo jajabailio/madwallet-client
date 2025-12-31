@@ -25,6 +25,7 @@ echo "Creating nginx config..."
 cat > /etc/nginx/conf.d/default.conf <<EOF
 server {
     listen $PORT;
+    listen [::]:$PORT;
     server_name localhost;
     root /usr/share/nginx/html;
     index index.html;
@@ -75,9 +76,12 @@ echo "Checking port..."
 netstat -tlnp | grep $PORT || echo "Port $PORT not listening"
 
 # Test if nginx is responding
-echo "Testing nginx HTTP response..."
+echo "Testing nginx HTTP response (IPv4)..."
 sleep 3
-wget -O- http://localhost:$PORT/ 2>&1 | head -20 || echo "WARNING: Nginx not responding to HTTP requests"
+wget -O- http://127.0.0.1:$PORT/ 2>&1 | head -20 || echo "WARNING: Nginx not responding on IPv4"
+
+echo "Testing nginx HTTP response (IPv6)..."
+wget -O- http://[::1]:$PORT/ 2>&1 | head -20 || echo "WARNING: Nginx not responding on IPv6"
 
 echo "=== Container fully ready ==="
 
