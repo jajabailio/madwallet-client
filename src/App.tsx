@@ -1,0 +1,78 @@
+import { Container, Box, Typography } from '@mui/material';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import CategoryManager from './components/Categories/CategoryManager';
+import Navigation from './components/common/Navigation';
+import ExpenseManager from './components/Expenses/ExpenseManager';
+import PaymentMethodManager from './components/PaymentMethods/PaymentMethodManager';
+import PurchaseManager from './components/Purchases/PurchaseManager';
+import StatusManager from './components/Statuses/StatusManager';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import {
+  AuthProvider,
+  CategoriesProvider,
+  PaymentMethodsProvider,
+  PurchasesProvider,
+  StatusesProvider,
+} from './contexts';
+
+const App = () => {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+
+          <Route
+            path="/*"
+            element={
+              <ProtectedRoute>
+                <CategoriesProvider>
+                  <PaymentMethodsProvider>
+                    <PurchasesProvider>
+                      <StatusesProvider>
+                        <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5' }}>
+                          <Box sx={{ bgcolor: '#fff', boxShadow: 1, mb: 4 }}>
+                            <Container maxWidth="lg" sx={{ py: 3 }}>
+                              <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', mb: 1 }}>
+                                Mad Wallet
+                              </Typography>
+                              <Typography variant="body2" color="textSecondary">
+                                Personal Finance Tracker
+                              </Typography>
+                            </Container>
+                          </Box>
+
+                          <Container maxWidth="lg" sx={{ py: 4 }}>
+                            <Navigation />
+
+                            <Routes>
+                              <Route path="/expenses" element={<ExpenseManager />} />
+                              <Route path="/categories" element={<CategoryManager />} />
+                              <Route path="/payment-methods" element={<PaymentMethodManager />} />
+                              <Route path="/purchases" element={<PurchaseManager />} />
+                              <Route path="/statuses" element={<StatusManager />} />
+                              <Route path="/" element={<Navigate to="/expenses" replace />} />
+                            </Routes>
+                          </Container>
+                        </Box>
+                      </StatusesProvider>
+                    </PurchasesProvider>
+                  </PaymentMethodsProvider>
+                </CategoriesProvider>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
+  );
+};
+
+export default App;
