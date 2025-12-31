@@ -1,16 +1,27 @@
 #!/bin/sh
-set -e
 
-echo "=== Entrypoint script started ==="
-echo "Environment variables:"
-env | grep -i port || echo "No PORT env var found"
+# Remove 'set -e' temporarily to not exit on errors
+echo "=== ENTRYPOINT STARTED ===" >&2
+echo "=== ENTRYPOINT STARTED ===" >&1
+
+# Print everything to both stdout and stderr
+exec 1>&2
+
+echo "Script is running"
+echo "Current directory: $(pwd)"
+echo "User: $(whoami)"
+echo "All env vars:"
+env
+echo "--- PORT env var ---"
+echo "PORT=${PORT}"
 
 # Use Railway's PORT or default to 80
 PORT=${PORT:-80}
 
-echo "=== Using port: $PORT ==="
+echo "Using port: $PORT"
 
 # Create nginx config with the correct port
+echo "Creating nginx config..."
 cat > /etc/nginx/conf.d/default.conf <<EOF
 server {
     listen $PORT;
@@ -45,8 +56,24 @@ server {
 }
 EOF
 
-echo "=== Nginx configured to listen on port $PORT ==="
-echo "=== Starting nginx... ==="
+echo "Nginx config created successfully"
+echo "Testing nginx config..."
+nginx -t || echo "Nginx config test FAILED"
 
-# Start nginx in foreground
-exec nginx -g "daemon off;"
+echo "Starting nginx on port $PORT..."
+nginx -g "daemon off;" &
+NGINX_PID=$!
+
+echo "Nginx started with PID: $NGINX_PID"
+echo "Waiting for nginx..."
+sleep 2
+
+echo "Checking if nginx is running..."
+ps aux | grep nginx || echo "Nginx not in process list"
+
+echo "Checking port..."
+netstat -tlnp | grep $PORT || echo "Port $PORT not listening"
+
+# Keep container alive
+echo "Container running, waiting for nginx process..."
+wait $NGINX_PID
