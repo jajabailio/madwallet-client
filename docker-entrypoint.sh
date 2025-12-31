@@ -74,6 +74,13 @@ ps aux | grep nginx || echo "Nginx not in process list"
 echo "Checking port..."
 netstat -tlnp | grep $PORT || echo "Port $PORT not listening"
 
+# Test if nginx is responding
+echo "Testing nginx HTTP response..."
+sleep 3
+wget -O- http://localhost:$PORT/ 2>&1 | head -20 || echo "WARNING: Nginx not responding to HTTP requests"
+
+echo "=== Container fully ready ==="
+
 # Keep container alive
 echo "Container running, waiting for nginx process..."
 wait $NGINX_PID
