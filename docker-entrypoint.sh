@@ -1,10 +1,14 @@
 #!/bin/sh
 set -e
 
+echo "=== Entrypoint script started ==="
+echo "Environment variables:"
+env | grep -i port || echo "No PORT env var found"
+
 # Use Railway's PORT or default to 80
 PORT=${PORT:-80}
 
-echo "Starting nginx on port $PORT"
+echo "=== Using port: $PORT ==="
 
 # Create nginx config with the correct port
 cat > /etc/nginx/conf.d/default.conf <<EOF
@@ -41,7 +45,8 @@ server {
 }
 EOF
 
-echo "Nginx configured to listen on port $PORT"
+echo "=== Nginx configured to listen on port $PORT ==="
+echo "=== Starting nginx... ==="
 
-# Start nginx
+# Start nginx in foreground
 exec nginx -g "daemon off;"
