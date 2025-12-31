@@ -39,6 +39,13 @@ server {
     add_header X-Content-Type-Options "nosniff" always;
     add_header X-XSS-Protection "1; mode=block" always;
 
+    # Health check endpoint for Railway
+    location /health {
+        access_log off;
+        return 200 "OK\n";
+        add_header Content-Type text/plain;
+    }
+
     # Handle client-side routing (React Router)
     location / {
         try_files \$uri \$uri/ /index.html;
@@ -82,6 +89,9 @@ wget -O- http://127.0.0.1:$PORT/ 2>&1 | head -20 || echo "WARNING: Nginx not res
 
 echo "Testing nginx HTTP response (IPv6)..."
 wget -O- http://[::1]:$PORT/ 2>&1 | head -20 || echo "WARNING: Nginx not responding on IPv6"
+
+echo "Testing /health endpoint..."
+wget -O- http://127.0.0.1:$PORT/health 2>&1 || echo "WARNING: Health check endpoint not responding"
 
 echo "=== Container fully ready ==="
 
