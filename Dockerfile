@@ -37,5 +37,5 @@ COPY --from=builder /app/node_modules ./node_modules
 
 EXPOSE 4173
 
-# Start preview server
-CMD ["yarn", "preview", "--host", "0.0.0.0"]
+# Start preview server on Railway's PORT or default to 4173
+CMD ["sh", "-c", "yarn preview --host 0.0.0.0 --port ${PORT:-4173}"]
