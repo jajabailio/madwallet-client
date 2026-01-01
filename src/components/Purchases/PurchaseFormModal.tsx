@@ -185,14 +185,17 @@ const PurchaseFormModal = ({ open, onClose, editingPurchase }: PurchaseFormModal
         setValue('startDate', new Date().toISOString().split('T')[0]);
         setValue('hasPaidInstallments', false);
         setValue('paidInstallments', 0);
-        // Set default category and status (first available)
+        // Set default category and status
         if (categories.length > 0) {
           setValue('categoryId', categories[0].id);
         }
         if (statuses.length > 0) {
-          setValue('statusId', statuses[0].id);
-          // Set default paid installments status to the first one (likely "Paid")
-          setValue('paidInstallmentsStatusId', statuses[0].id);
+          // Default to "Unpaid" status for new purchases
+          const unpaidStatus = statuses.find((s) => s.name === 'Unpaid');
+          const paidStatus = statuses.find((s) => s.name === 'Paid');
+          setValue('statusId', unpaidStatus?.id || statuses[0].id);
+          // Set default paid installments status to "Paid"
+          setValue('paidInstallmentsStatusId', paidStatus?.id || statuses[0].id);
         }
       }
     }
