@@ -50,7 +50,7 @@ const ExpenseDetailsDrawer = ({ expense, open, onClose }: ExpenseDetailsDrawerPr
 
           <DetailRow label="Amount" value={
             <Typography variant="h6" color="primary" sx={{ fontWeight: 'bold' }}>
-              {formatCurrency(expense.amount)}
+              {formatCurrency(expense.amountCents)}
             </Typography>
           } />
 
@@ -101,7 +101,7 @@ const ExpenseDetailsDrawer = ({ expense, open, onClose }: ExpenseDetailsDrawerPr
               } />
 
               <DetailRow label="Total Purchase Amount" value={
-                formatCurrency(expense.purchase.totalAmount)
+                formatCurrency(expense.purchase.totalAmountCents)
               } />
 
               <DetailRow label="Frequency" value={

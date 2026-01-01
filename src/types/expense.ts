@@ -6,7 +6,7 @@ import type { Status } from './status';
 export interface Expense {
   id: number;
   description: string;
-  amount: number;
+  amountCents: number;  // Amount stored in cents
   categoryId: number;
   category: Category;
   statusId?: number;

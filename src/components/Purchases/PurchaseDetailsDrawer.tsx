@@ -67,7 +67,7 @@ const PurchaseDetailsDrawer = ({ purchase, open, onClose }: PurchaseDetailsDrawe
 
           <DetailRow label="Total Amount" value={
             <Typography variant="h6" color="primary" sx={styles.totalAmount}>
-              {formatCurrency(purchase.totalAmount)}
+              {formatCurrency(purchase.totalAmountCents)}
             </Typography>
           } />
 
@@ -137,7 +137,7 @@ const PurchaseDetailsDrawer = ({ purchase, open, onClose }: PurchaseDetailsDrawe
                             Installment {expense.installmentNumber}
                           </Typography>
                           <Typography variant="body2" sx={styles.installmentAmount}>
-                            {formatCurrency(expense.amount)}
+                            {formatCurrency(expense.amountCents)}
                           </Typography>
                         </Box>
                       }

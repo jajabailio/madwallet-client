@@ -6,7 +6,7 @@ import type { Status } from './status';
 export interface Purchase {
   id: number;
   description: string;
-  totalAmount: number;
+  totalAmountCents: number;  // Total amount stored in cents
   installmentCount: number;
   frequency: string;
   startDate: Date;

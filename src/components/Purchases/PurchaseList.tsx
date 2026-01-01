@@ -84,7 +84,7 @@ const PurchaseList = ({ purchases, onEdit, onDelete, onViewDetails }: PurchaseLi
         },
         {
           key: 'totalAmount',
-          content: formatCurrency(Number(purchase.totalAmount)),
+          content: formatCurrency(Number(purchase.totalAmountCents)),
         },
       {
         key: 'installments',

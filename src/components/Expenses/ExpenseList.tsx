@@ -75,7 +75,7 @@ const ExpenseList = ({ expenses, onEdit, onDelete, onViewDetails }: ExpenseListP
       },
       {
         key: 'amount',
-        content: formatCurrency(expense.amount),
+        content: formatCurrency(expense.amountCents),
       },
       {
         key: 'date',

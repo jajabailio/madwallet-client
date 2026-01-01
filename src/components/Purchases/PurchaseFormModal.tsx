@@ -167,7 +167,7 @@ const PurchaseFormModal = ({ open, onClose, editingPurchase }: PurchaseFormModal
       reset();
       if (editingPurchase) {
         setValue('description', editingPurchase.description);
-        setValue('totalAmount', editingPurchase.totalAmount);
+        setValue('totalAmount', editingPurchase.totalAmountCents);
         setValue('installmentCount', editingPurchase.installmentCount);
         setValue('frequency', editingPurchase.frequency);
         setValue(

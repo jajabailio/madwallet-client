@@ -68,7 +68,7 @@ const ExpenseFormModal = ({
       const updatedExpense: Expense = {
         ...editingExpense,
         description: data.description as string,
-        amount: Number(data.amount),
+        amountCents: Number(data.amount),
         categoryId,
         category,
         statusId,
@@ -112,7 +112,7 @@ const ExpenseFormModal = ({
       const optimisticExpense: Expense = {
         id: -Date.now(),
         description: data.description as string,
-        amount: Number(data.amount),
+        amountCents: Number(data.amount),
         categoryId,
         category,
         statusId,
@@ -176,7 +176,7 @@ const ExpenseFormModal = ({
       reset();
       if (editingExpense) {
         setValue('description', editingExpense.description);
-        setValue('amount', editingExpense.amount);
+        setValue('amount', editingExpense.amountCents);
         setValue('categoryId', editingExpense.categoryId);
         setValue('statusId', editingExpense.statusId);
         setValue('paymentMethodId', editingExpense.paymentMethodId || '');
