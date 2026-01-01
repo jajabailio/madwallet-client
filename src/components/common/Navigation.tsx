@@ -1,12 +1,14 @@
-import { Tab, Tabs, Box, Button, Typography } from '@mui/material';
+import { Tab, Tabs, Box, Button, Typography, IconButton, Tooltip } from '@mui/material';
+import { Brightness4, Brightness7 } from '@mui/icons-material';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts';
+import { useAuth, useTheme } from '../../contexts';
 
 const Navigation = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const currentPath = location.pathname;
   const { user, logout } = useAuth();
+  const { mode, toggleTheme } = useTheme();
 
   const handleLogout = () => {
     logout();
@@ -33,6 +35,11 @@ const Navigation = () => {
       </Tabs>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, pr: 2 }}>
+        <Tooltip title={mode === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}>
+          <IconButton onClick={toggleTheme} color="inherit">
+            {mode === 'light' ? <Brightness4 /> : <Brightness7 />}
+          </IconButton>
+        </Tooltip>
         <Typography variant="body2" color="textSecondary">
           {user?.firstName} {user?.lastName}
         </Typography>

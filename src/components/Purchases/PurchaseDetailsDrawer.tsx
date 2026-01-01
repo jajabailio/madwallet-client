@@ -13,6 +13,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { formatCurrency, formatDate } from '../../utils';
 import type { Purchase } from '../../types';
+import { styles } from './PurchaseDetailsDrawer.styles';
 
 interface PurchaseDetailsDrawerProps {
   purchase: Purchase | null;
@@ -24,8 +25,8 @@ const PurchaseDetailsDrawer = ({ purchase, open, onClose }: PurchaseDetailsDrawe
   if (!purchase) return null;
 
   const DetailRow = ({ label, value }: { label: string; value: React.ReactNode }) => (
-    <Box sx={{ mb: 2 }}>
-      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+    <Box sx={styles.detailRow}>
+      <Typography variant="caption" color="text.secondary" sx={styles.detailLabel}>
         {label}
       </Typography>
       <Typography variant="body1">{value || '—'}</Typography>
@@ -47,9 +48,9 @@ const PurchaseDetailsDrawer = ({ purchase, open, onClose }: PurchaseDetailsDrawe
 
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
-      <Box sx={{ width: 500, p: 3 }}>
+      <Box sx={styles.drawer}>
         {/* Header */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Box sx={styles.header}>
           <Typography variant="h5" component="h2">
             Purchase Details
           </Typography>
@@ -58,19 +59,19 @@ const PurchaseDetailsDrawer = ({ purchase, open, onClose }: PurchaseDetailsDrawe
           </IconButton>
         </Box>
 
-        <Divider sx={{ mb: 3 }} />
+        <Divider sx={styles.divider} />
 
         {/* Main Details */}
         <Stack spacing={2}>
           <DetailRow label="Description" value={purchase.description} />
 
           <DetailRow label="Total Amount" value={
-            <Typography variant="h6" color="primary" sx={{ fontWeight: 'bold' }}>
+            <Typography variant="h6" color="primary" sx={styles.totalAmount}>
               {formatCurrency(purchase.totalAmount)}
             </Typography>
           } />
 
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+          <Box sx={styles.gridTwoColumns}>
             <DetailRow label="Installment Count" value={purchase.installmentCount} />
             <DetailRow label="Frequency" value={
               <Chip label={purchase.frequency} size="small" variant="outlined" />
@@ -85,14 +86,14 @@ const PurchaseDetailsDrawer = ({ purchase, open, onClose }: PurchaseDetailsDrawe
             />
           } />
 
-          <Divider sx={{ my: 2 }} />
+          <Divider sx={styles.dividerSpacing} />
 
           <DetailRow label="Category" value={
             purchase.category ? (
               <Chip
                 label={purchase.category.name}
                 size="small"
-                sx={{ bgcolor: purchase.category.color, color: '#fff' }}
+                sx={{ ...styles.categoryChip, bgcolor: purchase.category.color }}
               />
             ) : '—'
           } />
@@ -109,9 +110,9 @@ const PurchaseDetailsDrawer = ({ purchase, open, onClose }: PurchaseDetailsDrawe
             ) : '—'
           } />
 
-          <Divider sx={{ my: 2 }} />
+          <Divider sx={styles.dividerSpacing} />
 
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+          <Box sx={styles.gridTwoColumns}>
             <DetailRow label="Start Date" value={formatDate(purchase.startDate)} />
             <DetailRow label="End Date" value={
               purchase.endDate ? formatDate(purchase.endDate) : '—'
@@ -121,34 +122,27 @@ const PurchaseDetailsDrawer = ({ purchase, open, onClose }: PurchaseDetailsDrawe
           {/* Installments/Expenses List */}
           {purchase.expenses && purchase.expenses.length > 0 && (
             <>
-              <Divider sx={{ my: 2 }} />
-              <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
+              <Divider sx={styles.dividerSpacing} />
+              <Typography variant="subtitle2" color="text.secondary" sx={styles.installmentsTitle}>
                 Installments ({purchase.expenses.length})
               </Typography>
 
-              <List dense sx={{ bgcolor: 'background.paper', borderRadius: 1, p: 0 }}>
+              <List dense sx={styles.installmentsList}>
                 {purchase.expenses.map((expense) => (
-                  <ListItem
-                    key={expense.id}
-                    sx={{
-                      borderBottom: '1px solid',
-                      borderColor: 'divider',
-                      '&:last-child': { borderBottom: 'none' },
-                    }}
-                  >
+                  <ListItem key={expense.id} sx={styles.installmentItem}>
                     <ListItemText
                       primary={
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Box sx={styles.installmentPrimary}>
                           <Typography variant="body2">
                             Installment {expense.installmentNumber}
                           </Typography>
-                          <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                          <Typography variant="body2" sx={styles.installmentAmount}>
                             {formatCurrency(expense.amount)}
                           </Typography>
                         </Box>
                       }
                       secondary={
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 0.5 }}>
+                        <Box sx={styles.installmentSecondary}>
                           <Typography variant="caption" color="text.secondary">
                             Due: {formatDate(expense.dueDate || expense.date)}
                           </Typography>
@@ -158,7 +152,7 @@ const PurchaseDetailsDrawer = ({ purchase, open, onClose }: PurchaseDetailsDrawe
                               size="small"
                               color={expense.status.name === 'Paid' ? 'success' : 'warning'}
                               variant="outlined"
-                              sx={{ height: 20, fontSize: '0.7rem' }}
+                              sx={styles.installmentChip}
                             />
                           )}
                         </Box>
@@ -170,10 +164,10 @@ const PurchaseDetailsDrawer = ({ purchase, open, onClose }: PurchaseDetailsDrawe
             </>
           )}
 
-          <Divider sx={{ my: 2 }} />
+          <Divider sx={styles.dividerSpacing} />
 
           {/* Timestamps */}
-          <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
+          <Typography variant="subtitle2" color="text.secondary" sx={styles.installmentsTitle}>
             Timestamps
           </Typography>
 

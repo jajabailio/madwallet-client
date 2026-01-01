@@ -3,3 +3,4 @@ export { CategoriesProvider, useCategories } from './CategoriesContext';
 export { PaymentMethodsProvider, usePaymentMethods } from './PaymentMethodsContext';
 export { PurchasesProvider, usePurchases } from './PurchasesContext';
 export { StatusesProvider, useStatuses } from './StatusesContext';
+export { ThemeProvider, useTheme } from './ThemeContext';

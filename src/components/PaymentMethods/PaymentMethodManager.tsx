@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { usePaymentMethods } from '../../contexts';
 import { httpService } from '../../services';
 import type { PaymentMethod } from '../../types';
+import EmptyState from '../common/EmptyState';
 import PaymentMethodFormModal from './PaymentMethodFormModal';
 import PaymentMethodList from './PaymentMethodList';
 
@@ -65,11 +66,15 @@ const PaymentMethodManager = () => {
         </Button>
       </Box>
 
-      <PaymentMethodList
-        paymentMethods={paymentMethods}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
+      {paymentMethods.length === 0 ? (
+        <EmptyState message="No payment methods available. Add your first payment method!" />
+      ) : (
+        <PaymentMethodList
+          paymentMethods={paymentMethods}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      )}
 
       <PaymentMethodFormModal
         open={modalOpen}

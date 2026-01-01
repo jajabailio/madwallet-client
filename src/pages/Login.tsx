@@ -16,12 +16,13 @@ const Login = () => {
 
 	const handleSubmit = async (data: Record<string, unknown>) => {
 		try {
-			await login({
+			const user = await login({
 				email: data.email as string,
 				password: data.password as string,
 			});
 
-			toast.success('Login successful!');
+			// Show personalized welcome message with user's first name
+			toast.success(`Welcome ${user.firstName}!`);
 			navigate('/expenses');
 		} catch (error) {
 			// Error toast handled by httpService
@@ -44,7 +45,7 @@ const Login = () => {
 				minHeight: '100vh',
 				display: 'flex',
 				alignItems: 'center',
-				bgcolor: '#f5f5f5',
+				bgcolor: 'background.default',
 			}}
 		>
 			<Container maxWidth="sm">

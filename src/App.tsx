@@ -17,13 +17,15 @@ import {
   PaymentMethodsProvider,
   PurchasesProvider,
   StatusesProvider,
+  ThemeProvider,
 } from './contexts';
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+    <ThemeProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
 
         <Routes>
           <Route path="/login" element={<Login />} />
@@ -37,8 +39,8 @@ const App = () => {
                   <PaymentMethodsProvider>
                     <PurchasesProvider>
                       <StatusesProvider>
-                        <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5' }}>
-                          <Box sx={{ bgcolor: '#fff', boxShadow: 1, mb: 4 }}>
+                        <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+                          <Box sx={{ bgcolor: 'background.paper', boxShadow: 1, mb: 4 }}>
                             <Container maxWidth="lg" sx={{ py: 3 }}>
                               <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', mb: 1 }}>
                                 Mad Wallet
@@ -72,6 +74,7 @@ const App = () => {
         </Routes>
       </AuthProvider>
     </BrowserRouter>
+    </ThemeProvider>
   );
 };
 

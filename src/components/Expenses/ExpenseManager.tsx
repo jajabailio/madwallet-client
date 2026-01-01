@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { httpService } from '../../services';
 import type { Expense } from '../../types';
+import EmptyState from '../common/EmptyState';
 import ExpenseDetailsDrawer from './ExpenseDetailsDrawer';
 import ExpenseFormModal from './ExpenseFormModal';
 import ExpenseList from './ExpenseList';
@@ -213,12 +214,16 @@ const ExpenseManager = () => {
         )}
       </Box>
 
-      <ExpenseList
-        expenses={filteredExpenses}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onViewDetails={handleViewDetails}
-      />
+      {filteredExpenses.length === 0 ? (
+        <EmptyState message="No expenses found for the selected period" />
+      ) : (
+        <ExpenseList
+          expenses={filteredExpenses}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onViewDetails={handleViewDetails}
+        />
+      )}
 
       <ExpenseFormModal
         open={modalOpen}

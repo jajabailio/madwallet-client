@@ -6,8 +6,8 @@ interface AuthContextType {
 	user: User | null;
 	token: string | null;
 	loading: boolean;
-	login: (credentials: LoginCredentials) => Promise<void>;
-	signup: (data: SignupData) => Promise<void>;
+	login: (credentials: LoginCredentials) => Promise<User>;
+	signup: (data: SignupData) => Promise<User>;
 	logout: () => void;
 	isAuthenticated: boolean;
 }
@@ -52,6 +52,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		// Store in localStorage
 		localStorage.setItem(TOKEN_KEY, token);
 		localStorage.setItem(USER_KEY, JSON.stringify(user));
+
+		return user;
 	};
 
 	// Signup function
@@ -71,6 +73,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		// Store in localStorage
 		localStorage.setItem(TOKEN_KEY, token);
 		localStorage.setItem(USER_KEY, JSON.stringify(user));
+
+		return user;
 	};
 
 	// Logout function

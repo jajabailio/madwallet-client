@@ -25,14 +25,14 @@ const Signup = () => {
 
 	const handleSubmit = async (data: Record<string, unknown>) => {
 		try {
-			await signup({
+			const user = await signup({
 				email: data.email as string,
 				password: data.password as string,
 				firstName: data.firstName as string,
 				lastName: data.lastName as string,
 			});
 
-			toast.success('Account created successfully!');
+			toast.success(`Welcome ${user.firstName}!`);
 			navigate('/expenses');
 		} catch (error) {
 			// Error toast handled by httpService
@@ -55,7 +55,7 @@ const Signup = () => {
 				minHeight: '100vh',
 				display: 'flex',
 				alignItems: 'center',
-				bgcolor: '#f5f5f5',
+				bgcolor: 'background.default',
 			}}
 		>
 			<Container maxWidth="sm">

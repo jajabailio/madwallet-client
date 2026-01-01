@@ -9,19 +9,30 @@ import {
 } from '@mui/material';
 import type { TTableContent } from '../../types';
 import type { TTableData } from '../../types/table';
+import EmptyState from './EmptyState';
 
 type TProps = {
   headers: TTableContent[];
   data: TTableData[];
   onRowClick?: (rowKey: number | string) => void;
+  emptyMessage?: string;
 };
 
-const DataTable = ({ headers, data, onRowClick }: TProps) => {
+const DataTable = ({ headers, data, onRowClick, emptyMessage = 'No data available' }: TProps) => {
+  // Show empty state if no data
+  if (data.length === 0) {
+    return (
+      <Paper>
+        <EmptyState message={emptyMessage} />
+      </Paper>
+    );
+  }
+
   return (
     <TableContainer component={Paper}>
       <MuiTable>
         <TableHead>
-          <TableRow sx={{ bgcolor: '#f5f5f5' }}>
+          <TableRow>
             {headers.map((header) => (
               <TableCell key={header.key} sx={{ fontWeight: 'bold' }}>
                 {header.content}

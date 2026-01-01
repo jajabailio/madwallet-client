@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { useCategories } from '../../contexts';
 import { httpService } from '../../services';
 import type { Category } from '../../types';
+import EmptyState from '../common/EmptyState';
 import CategoryFormModal from './CategoryFormModal';
 import CategoryList from './CategoryList';
 
@@ -65,7 +66,11 @@ const CategoryManager = () => {
         </Button>
       </Box>
 
-      <CategoryList categories={categories} onEdit={handleEdit} onDelete={handleDelete} />
+      {categories.length === 0 ? (
+        <EmptyState message="No categories available. Create your first category!" />
+      ) : (
+        <CategoryList categories={categories} onEdit={handleEdit} onDelete={handleDelete} />
+      )}
 
       <CategoryFormModal
         open={modalOpen}
