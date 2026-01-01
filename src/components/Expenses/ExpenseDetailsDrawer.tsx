@@ -31,7 +31,7 @@ const ExpenseDetailsDrawer = ({ expense, open, onClose }: ExpenseDetailsDrawerPr
 
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
-      <Box sx={{ width: 450, p: 3 }}>
+      <Box sx={{ width: { xs: '100vw', sm: 450 }, p: { xs: 2, sm: 3 } }}>
         {/* Header */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
           <Typography variant="h5" component="h2">

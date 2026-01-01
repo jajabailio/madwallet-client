@@ -2,8 +2,8 @@ import type { SxProps, Theme } from '@mui/material';
 
 export const styles = {
   drawer: {
-    width: 500,
-    p: 3,
+    width: { xs: '100vw', sm: 500 },
+    p: { xs: 2, sm: 3 },
   } as SxProps<Theme>,
 
   header: {

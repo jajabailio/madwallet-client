@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTitle, Grid } from '@mui/material';
+import { Dialog, DialogContent, DialogTitle, Grid, useMediaQuery, useTheme } from '@mui/material';
 import Joi from 'joi';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
@@ -23,6 +23,8 @@ const StatusFormModal = ({
   onClose,
   editingStatus,
 }: StatusFormModalProps) => {
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const { refreshStatuses } = useStatuses();
   const isEditing = !!editingStatus;
 
@@ -95,7 +97,7 @@ const StatusFormModal = ({
   }, [editingStatus, open, reset, setValue]);
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth fullScreen={fullScreen}>
       <DialogTitle>{isEditing ? 'Edit Status' : 'Add New Status'}</DialogTitle>
       <DialogContent>
         <form onSubmit={formHandleSubmit}>

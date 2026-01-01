@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTitle, Grid } from '@mui/material';
+import { Dialog, DialogContent, DialogTitle, Grid, useMediaQuery, useTheme } from '@mui/material';
 import Joi from 'joi';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
@@ -32,6 +32,8 @@ const ExpenseFormModal = ({
   setExpenses,
   editingExpense,
 }: ExpenseFormModalProps) => {
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const { categories, loading: loadingCategories } = useCategories();
   const { statuses, loading: loadingStatuses } = useStatuses();
   const { paymentMethods } = usePaymentMethods();
@@ -186,7 +188,7 @@ const ExpenseFormModal = ({
   }, [editingExpense, open, reset, setValue]);
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth fullScreen={fullScreen}>
       <DialogTitle>{isEditing ? 'Edit Expense' : 'Add New Expense'}</DialogTitle>
       <DialogContent>
         <form onSubmit={formHandleSubmit}>

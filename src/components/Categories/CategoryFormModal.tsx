@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTitle, Grid } from '@mui/material';
+import { Dialog, DialogContent, DialogTitle, Grid, useMediaQuery, useTheme } from '@mui/material';
 import Joi from 'joi';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
@@ -29,6 +29,8 @@ const CategoryFormModal = ({
   onClose,
   editingCategory,
 }: CategoryFormModalProps) => {
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const { refreshCategories } = useCategories();
   const isEditing = !!editingCategory;
 
@@ -110,7 +112,7 @@ const CategoryFormModal = ({
   const currentColor = (data.color as string) || DEFAULT_CATEGORY_COLOR;
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth fullScreen={fullScreen}>
       <DialogTitle>{isEditing ? 'Edit Category' : 'Add New Category'}</DialogTitle>
       <DialogContent>
         <form onSubmit={formHandleSubmit}>

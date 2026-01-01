@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTitle, Grid } from '@mui/material';
+import { Dialog, DialogContent, DialogTitle, Grid, useMediaQuery, useTheme } from '@mui/material';
 import Joi from 'joi';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
@@ -71,6 +71,8 @@ const purchaseSchema = Joi.object({
 });
 
 const PurchaseFormModal = ({ open, onClose, editingPurchase }: PurchaseFormModalProps) => {
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const { refreshPurchases } = usePurchases();
   const { categories } = useCategories();
   const { statuses } = useStatuses();
@@ -214,7 +216,7 @@ const PurchaseFormModal = ({ open, onClose, editingPurchase }: PurchaseFormModal
   }, [data.installmentCount, data.frequency, open, isEditing, setValue]);
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth fullScreen={fullScreen}>
       <DialogTitle>{isEditing ? 'Edit Purchase' : 'Add New Purchase'}</DialogTitle>
       <DialogContent>
         <form onSubmit={formHandleSubmit}>

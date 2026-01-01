@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTitle, Grid } from '@mui/material';
+import { Dialog, DialogContent, DialogTitle, Grid, useMediaQuery, useTheme } from '@mui/material';
 import Joi from 'joi';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
@@ -30,6 +30,8 @@ const PaymentMethodFormModal = ({
   onClose,
   editingPaymentMethod,
 }: PaymentMethodFormModalProps) => {
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const { refreshPaymentMethods } = usePaymentMethods();
   const isEditing = !!editingPaymentMethod;
 
@@ -116,7 +118,7 @@ const PaymentMethodFormModal = ({
   }, [editingPaymentMethod, open, reset, setValue]);
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth fullScreen={fullScreen}>
       <DialogTitle>
         {isEditing ? 'Edit Payment Method' : 'Add New Payment Method'}
       </DialogTitle>
