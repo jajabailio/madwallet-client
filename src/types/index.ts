@@ -7,6 +7,7 @@ export type {
   PaymentMethodSummary,
   PaymentMethodExpenseFilters,
 } from './payment-method';
+export type { RecurringBill, RecurringBillFrequency } from './recurring-bill';
 export type { Status } from './status';
 export type { Wallet } from './wallet';
 export type { WalletTransaction } from './wallet-transaction';

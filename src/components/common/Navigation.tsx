@@ -13,6 +13,7 @@ const Navigation = () => {
     { label: 'Categories', path: '/categories' },
     { label: 'Payment Methods', path: '/payment-methods' },
     { label: 'Purchases', path: '/purchases' },
+    { label: 'Recurring Bills', path: '/recurring-bills' },
     { label: 'Statuses', path: '/statuses' },
     { label: 'Wallets', path: '/wallets' },
   ];

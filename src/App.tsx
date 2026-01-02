@@ -9,6 +9,7 @@ import SummaryBar from './components/common/SummaryBar';
 import ExpenseManager from './components/Expenses/ExpenseManager';
 import PaymentMethodManager from './components/PaymentMethods/PaymentMethodManager';
 import PurchaseManager from './components/Purchases/PurchaseManager';
+import RecurringBillManager from './components/RecurringBills/RecurringBillManager';
 import StatusManager from './components/Statuses/StatusManager';
 import WalletManager from './components/Wallets/WalletManager';
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -101,6 +102,7 @@ const App = () => {
                                   <Route path="/categories" element={<CategoryManager />} />
                                   <Route path="/payment-methods" element={<PaymentMethodManager />} />
                                   <Route path="/purchases" element={<PurchaseManager />} />
+                                  <Route path="/recurring-bills" element={<RecurringBillManager />} />
                                   <Route path="/statuses" element={<StatusManager />} />
                                   <Route path="/wallets" element={<WalletManager />} />
                                   <Route path="/" element={<Navigate to="/expenses" replace />} />

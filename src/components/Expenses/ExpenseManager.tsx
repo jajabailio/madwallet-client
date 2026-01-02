@@ -1,7 +1,5 @@
-import { Box, Button, CircularProgress, Grid, ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { Box, Button, CircularProgress, IconButton, Typography } from '@mui/material';
+import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { httpService } from '../../services';
@@ -11,17 +9,13 @@ import ExpenseDetailsDrawer from './ExpenseDetailsDrawer';
 import ExpenseFormModal from './ExpenseFormModal';
 import ExpenseList from './ExpenseList';
 
-type TimelineFilter = 'all' | '1d' | '7d' | '15d' | '30d' | 'custom';
-
 const ExpenseManager = () => {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
-  const [timelineFilter, setTimelineFilter] = useState<TimelineFilter>('1d');
-  const [customStartDate, setCustomStartDate] = useState<Date | null>(null);
-  const [customEndDate, setCustomEndDate] = useState<Date | null>(null);
+  const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
 
   // Fetch expenses on mount
   useEffect(() => {
@@ -79,55 +73,33 @@ const ExpenseManager = () => {
     setSelectedExpense(null);
   };
 
-  // Filter expenses based on timeline
+  // Filter expenses by selected month
   const filteredExpenses = useMemo(() => {
-    if (timelineFilter === 'all') {
-      return expenses;
-    }
+    const startOfMonth = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth(), 1);
+    startOfMonth.setHours(0, 0, 0, 0);
 
-    if (timelineFilter === 'custom') {
-      if (!customStartDate || !customEndDate) {
-        return expenses;
-      }
-
-      const startDate = new Date(customStartDate);
-      startDate.setHours(0, 0, 0, 0);
-
-      const endDate = new Date(customEndDate);
-      endDate.setHours(23, 59, 59, 999); // End of the day
-
-      return expenses.filter((expense) => {
-        const expenseDate = new Date(expense.date);
-        return expenseDate >= startDate && expenseDate <= endDate;
-      });
-    }
-
-    const now = new Date();
-    now.setHours(0, 0, 0, 0); // Start of today
-
-    const filterDays = {
-      '1d': 1,
-      '7d': 7,
-      '15d': 15,
-      '30d': 30,
-    };
-
-    const days = filterDays[timelineFilter];
-    const endDate = new Date(now);
-    endDate.setDate(endDate.getDate() + days);
+    const endOfMonth = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + 1, 0);
+    endOfMonth.setHours(23, 59, 59, 999);
 
     return expenses.filter((expense) => {
       const expenseDate = new Date(expense.date);
-      expenseDate.setHours(0, 0, 0, 0);
-
-      return expenseDate >= now && expenseDate < endDate;
+      return expenseDate >= startOfMonth && expenseDate <= endOfMonth;
     });
-  }, [expenses, timelineFilter, customStartDate, customEndDate]);
+  }, [expenses, selectedMonth]);
 
-  const handleTimelineChange = (_event: React.MouseEvent<HTMLElement>, newFilter: TimelineFilter) => {
-    if (newFilter !== null) {
-      setTimelineFilter(newFilter);
-    }
+  // Navigate to previous month
+  const handlePreviousMonth = () => {
+    setSelectedMonth(new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() - 1, 1));
+  };
+
+  // Navigate to next month
+  const handleNextMonth = () => {
+    setSelectedMonth(new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + 1, 1));
+  };
+
+  // Format month display (e.g., "January 2026")
+  const formatMonthYear = (date: Date) => {
+    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
   };
 
   if (loading) {
@@ -149,69 +121,30 @@ const ExpenseManager = () => {
         </Button>
       </Box>
 
-      <Box sx={{ mb: 3 }}>
-        <ToggleButtonGroup
-          value={timelineFilter}
-          exclusive
-          onChange={handleTimelineChange}
-          aria-label="timeline filter"
-          size="small"
-          color="primary"
-        >
-          <ToggleButton value="1d" aria-label="today">
-            Today
-          </ToggleButton>
-          <ToggleButton value="7d" aria-label="next 7 days">
-            7 Days
-          </ToggleButton>
-          <ToggleButton value="15d" aria-label="next 15 days">
-            15 Days
-          </ToggleButton>
-          <ToggleButton value="30d" aria-label="next 30 days">
-            30 Days
-          </ToggleButton>
-          <ToggleButton value="custom" aria-label="custom date range">
-            Custom
-          </ToggleButton>
-          <ToggleButton value="all" aria-label="all expenses">
-            All
-          </ToggleButton>
-        </ToggleButtonGroup>
+      <Box
+        sx={{
+          mb: 3,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 2,
+          bgcolor: 'background.paper',
+          p: 2,
+          borderRadius: 1,
+          boxShadow: 1,
+        }}
+      >
+        <IconButton onClick={handlePreviousMonth} aria-label="previous month" color="primary">
+          <ChevronLeft />
+        </IconButton>
 
-        {timelineFilter === 'custom' && (
-          <Box sx={{ mt: 2 }}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <DatePicker
-                    label="Start Date"
-                    value={customStartDate}
-                    onChange={(newValue) => setCustomStartDate(newValue)}
-                    slotProps={{
-                      textField: {
-                        fullWidth: true,
-                        size: 'small',
-                      },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <DatePicker
-                    label="End Date"
-                    value={customEndDate}
-                    onChange={(newValue) => setCustomEndDate(newValue)}
-                    slotProps={{
-                      textField: {
-                        fullWidth: true,
-                        size: 'small',
-                      },
-                    }}
-                  />
-                </Grid>
-              </Grid>
-            </LocalizationProvider>
-          </Box>
-        )}
+        <Typography variant="h6" sx={{ minWidth: 200, textAlign: 'center' }}>
+          {formatMonthYear(selectedMonth)}
+        </Typography>
+
+        <IconButton onClick={handleNextMonth} aria-label="next month" color="primary">
+          <ChevronRight />
+        </IconButton>
       </Box>
 
       {filteredExpenses.length === 0 ? (
