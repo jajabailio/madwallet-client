@@ -5,6 +5,7 @@ import { usePaymentMethods } from '../../contexts';
 import { httpService } from '../../services';
 import type { PaymentMethod } from '../../types';
 import EmptyState from '../common/EmptyState';
+import PaymentMethodDetailsDrawer from './PaymentMethodDetailsDrawer';
 import PaymentMethodFormModal from './PaymentMethodFormModal';
 import PaymentMethodList from './PaymentMethodList';
 
@@ -12,6 +13,7 @@ const PaymentMethodManager = () => {
   const { paymentMethods, loading, refreshPaymentMethods } = usePaymentMethods();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingPaymentMethod, setEditingPaymentMethod] = useState<PaymentMethod | null>(null);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod | null>(null);
 
   const handleOpenModal = () => {
     setEditingPaymentMethod(null);
@@ -26,6 +28,14 @@ const PaymentMethodManager = () => {
   const handleEdit = (paymentMethod: PaymentMethod) => {
     setEditingPaymentMethod(paymentMethod);
     setModalOpen(true);
+  };
+
+  const handleViewDetails = (paymentMethod: PaymentMethod) => {
+    setSelectedPaymentMethod(paymentMethod);
+  };
+
+  const handleCloseDrawer = () => {
+    setSelectedPaymentMethod(null);
   };
 
   const handleDelete = async (id: number) => {
@@ -73,6 +83,7 @@ const PaymentMethodManager = () => {
           paymentMethods={paymentMethods}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          onViewDetails={handleViewDetails}
         />
       )}
 
@@ -80,6 +91,12 @@ const PaymentMethodManager = () => {
         open={modalOpen}
         onClose={handleCloseModal}
         editingPaymentMethod={editingPaymentMethod}
+      />
+
+      <PaymentMethodDetailsDrawer
+        paymentMethod={selectedPaymentMethod}
+        open={!!selectedPaymentMethod}
+        onClose={handleCloseDrawer}
       />
     </Box>
   );

@@ -2,7 +2,11 @@ export type { Category } from './category';
 export type { DashboardSummary } from './dashboard';
 export type { Purchase } from './purchase';
 export type { Expense } from './expense';
-export type { PaymentMethod } from './payment-method';
+export type {
+  PaymentMethod,
+  PaymentMethodSummary,
+  PaymentMethodExpenseFilters,
+} from './payment-method';
 export type { Status } from './status';
 export type { Wallet } from './wallet';
 export type { WalletTransaction } from './wallet-transaction';

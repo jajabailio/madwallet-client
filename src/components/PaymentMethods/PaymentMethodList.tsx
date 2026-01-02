@@ -1,6 +1,7 @@
 import { Box, Chip, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import type { PaymentMethod, TTableContent } from '../../types';
 import type { TTableData } from '../../types/table';
 import { formatDate } from '../../utils';
@@ -10,9 +11,15 @@ interface PaymentMethodListProps {
   paymentMethods: PaymentMethod[];
   onEdit: (paymentMethod: PaymentMethod) => void;
   onDelete: (id: number) => void;
+  onViewDetails: (paymentMethod: PaymentMethod) => void;
 }
 
-const PaymentMethodList = ({ paymentMethods, onEdit, onDelete }: PaymentMethodListProps) => {
+const PaymentMethodList = ({
+  paymentMethods,
+  onEdit,
+  onDelete,
+  onViewDetails,
+}: PaymentMethodListProps) => {
   const headers: TTableContent[] = [
     {
       key: 'name',
@@ -110,6 +117,14 @@ const PaymentMethodList = ({ paymentMethods, onEdit, onDelete }: PaymentMethodLi
         key: 'actions',
         content: (
           <Box sx={{ display: 'flex', gap: 1 }}>
+            <IconButton
+              size="small"
+              color="info"
+              onClick={() => onViewDetails(paymentMethod)}
+              aria-label="view details"
+            >
+              <VisibilityIcon fontSize="small" />
+            </IconButton>
             <IconButton
               size="small"
               color="primary"
