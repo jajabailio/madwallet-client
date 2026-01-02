@@ -1,6 +1,9 @@
 export { AuthProvider, useAuth } from './AuthContext';
 export { CategoriesProvider, useCategories } from './CategoriesContext';
+export { DashboardProvider, useDashboard } from './DashboardContext';
 export { PaymentMethodsProvider, usePaymentMethods } from './PaymentMethodsContext';
 export { PurchasesProvider, usePurchases } from './PurchasesContext';
 export { StatusesProvider, useStatuses } from './StatusesContext';
 export { ThemeProvider, useTheme } from './ThemeContext';
+export { WalletProvider, useWallets } from './WalletContext';
+export { WalletTransactionProvider, useWalletTransactions } from './WalletTransactionContext';

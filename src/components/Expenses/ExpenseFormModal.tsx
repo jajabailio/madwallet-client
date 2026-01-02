@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogTitle, Grid, useMediaQuery, useTheme } fro
 import Joi from 'joi';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { useCategories, usePaymentMethods, useStatuses } from '../../contexts';
+import { useCategories, useDashboard, usePaymentMethods, useStatuses } from '../../contexts';
 import { httpService } from '../../services';
 import type { Expense } from '../../types';
 import FormBuilder from '../form/FormBuilder';
@@ -37,6 +37,7 @@ const ExpenseFormModal = ({
   const { categories, loading: loadingCategories } = useCategories();
   const { statuses, loading: loadingStatuses } = useStatuses();
   const { paymentMethods } = usePaymentMethods();
+  const { refreshSummary } = useDashboard();
 
   const isEditing = !!editingExpense;
 
@@ -101,6 +102,7 @@ const ExpenseFormModal = ({
           prev.map((expense) => (expense.id === editingExpense.id ? response.data : expense)),
         );
 
+        await refreshSummary();
         toast.success('Expense updated successfully!');
       } catch (error) {
         setExpenses(previousExpenses);
@@ -148,6 +150,7 @@ const ExpenseFormModal = ({
           prev.map((expense) => (expense.id === optimisticExpense.id ? response.data : expense)),
         );
 
+        await refreshSummary();
         toast.success('Expense created successfully!');
       } catch (error) {
         setExpenses(previousExpenses);
