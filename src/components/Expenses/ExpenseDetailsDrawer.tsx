@@ -66,7 +66,12 @@ const ExpenseDetailsDrawer = ({ expense, open, onClose }: ExpenseDetailsDrawerPr
 
           <DetailRow label="Status" value={
             expense.status ? (
-              <Chip label={expense.status.name} size="small" color="default" />
+              <Chip
+                label={expense.status.name}
+                size="small"
+                color={expense.status.name === 'Paid' ? 'success' : 'warning'}
+                variant={expense.status.name === 'Paid' ? 'filled' : 'outlined'}
+              />
             ) : '—'
           } />
 
@@ -75,6 +80,31 @@ const ExpenseDetailsDrawer = ({ expense, open, onClose }: ExpenseDetailsDrawerPr
               <Chip label={expense.paymentMethod.name} size="small" variant="outlined" />
             ) : '—'
           } />
+
+          {/* Payment Information */}
+          {expense.status?.name === 'Paid' && (
+            <>
+              <Divider sx={{ my: 2 }} />
+              <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
+                Payment Information
+              </Typography>
+
+              <Box sx={{
+                p: 2,
+                bgcolor: 'success.light',
+                borderRadius: 1,
+                border: '1px solid',
+                borderColor: 'success.main'
+              }}>
+                <Typography variant="body2" sx={{ color: 'success.dark', fontWeight: 'medium' }}>
+                  ✓ This expense has been paid
+                </Typography>
+                <Typography variant="caption" sx={{ color: 'success.dark', display: 'block', mt: 0.5 }}>
+                  Detailed payment tracking (wallet used, transaction date) will be available soon
+                </Typography>
+              </Box>
+            </>
+          )}
 
           <Divider sx={{ my: 2 }} />
 

@@ -1,3 +1,5 @@
+import type { Wallet } from './wallet';
+
 export interface PaymentMethod {
   id: number;
   name: string;
@@ -5,6 +7,9 @@ export interface PaymentMethod {
   description?: string;
   statementDate?: number;
   paymentDueDate?: number;
+  linkedWalletId?: number;
+  linkedWallet?: Wallet;
+  autoDeduct: boolean;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;

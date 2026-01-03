@@ -1,6 +1,7 @@
 import { Box, Chip, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import PaymentIcon from '@mui/icons-material/Payment';
 import type { Expense, TTableContent } from '../../types';
 import type { TTableData } from '../../types/table';
 import { formatCurrency, formatDate, getCategoryColor } from '../../utils';
@@ -11,9 +12,10 @@ interface ExpenseListProps {
   onEdit: (expense: Expense) => void;
   onDelete: (id: number) => void;
   onViewDetails: (expense: Expense) => void;
+  onPay: (expense: Expense) => void;
 }
 
-const ExpenseList = ({ expenses, onEdit, onDelete, onViewDetails }: ExpenseListProps) => {
+const ExpenseList = ({ expenses, onEdit, onDelete, onViewDetails, onPay }: ExpenseListProps) => {
 
   const headers: TTableContent[] = [
     {
@@ -103,6 +105,19 @@ const ExpenseList = ({ expenses, onEdit, onDelete, onViewDetails }: ExpenseListP
         key: 'actions',
         content: (
           <Box sx={{ display: 'flex', gap: 1 }}>
+            {expense.status?.name !== 'Paid' && (
+              <IconButton
+                size="small"
+                color="success"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onPay(expense);
+                }}
+                aria-label="pay"
+              >
+                <PaymentIcon fontSize="small" />
+              </IconButton>
+            )}
             <IconButton
               size="small"
               color="primary"

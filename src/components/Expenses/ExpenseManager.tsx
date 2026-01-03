@@ -8,6 +8,7 @@ import EmptyState from '../common/EmptyState';
 import ExpenseDetailsDrawer from './ExpenseDetailsDrawer';
 import ExpenseFormModal from './ExpenseFormModal';
 import ExpenseList from './ExpenseList';
+import PayExpenseModal from './PayExpenseModal';
 
 const ExpenseManager = () => {
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -16,6 +17,7 @@ const ExpenseManager = () => {
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
+  const [payingExpense, setPayingExpense] = useState<Expense | null>(null);
 
   // Fetch expenses on mount
   useEffect(() => {
@@ -97,6 +99,15 @@ const ExpenseManager = () => {
 
   const handleCloseDrawer = () => {
     setSelectedExpense(null);
+  };
+
+  const handlePay = (expense: Expense) => {
+    setPayingExpense(expense);
+  };
+
+  const handlePaymentSuccess = async () => {
+    await fetchExpenses();
+    setPayingExpense(null);
   };
 
   // Filter expenses by selected month
@@ -181,6 +192,7 @@ const ExpenseManager = () => {
           onEdit={handleEdit}
           onDelete={handleDelete}
           onViewDetails={handleViewDetails}
+          onPay={handlePay}
         />
       )}
 
@@ -196,6 +208,13 @@ const ExpenseManager = () => {
         expense={selectedExpense}
         open={!!selectedExpense}
         onClose={handleCloseDrawer}
+      />
+
+      <PayExpenseModal
+        open={!!payingExpense}
+        onClose={() => setPayingExpense(null)}
+        expense={payingExpense}
+        onPaymentSuccess={handlePaymentSuccess}
       />
     </Box>
   );
