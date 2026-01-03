@@ -19,17 +19,43 @@ const ExpenseManager = () => {
 
   // Fetch expenses on mount
   useEffect(() => {
-    httpService<Expense[]>({
-      method: 'get',
-      url: '/expenses',
-      onSuccess: (response) => {
-        setExpenses(response.data);
-        setLoading(false);
-      },
-    }).catch(() => {
-      setLoading(false);
-    });
+    fetchExpenses();
   }, []);
+
+  // Auto-generate recurring bill expenses when month changes
+  useEffect(() => {
+    const year = selectedMonth.getFullYear();
+    const month = selectedMonth.getMonth() + 1; // getMonth() is 0-indexed
+
+    // Generate expenses for the selected month
+    httpService({
+      method: 'post',
+      url: '/recurring-bills/generate-for-month',
+      data: { year, month },
+    })
+      .then(() => {
+        // Refetch expenses after generation
+        return fetchExpenses();
+      })
+      .catch((error) => {
+        // Silently fail - it's ok if there are no recurring bills or generation fails
+        console.log('No recurring bills to generate for this month:', error);
+      });
+  }, [selectedMonth]);
+
+  const fetchExpenses = async () => {
+    try {
+      const response = await httpService<Expense[]>({
+        method: 'get',
+        url: '/expenses',
+      });
+      setExpenses(response.data);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error('Failed to fetch expenses:', error);
+    }
+  };
 
   const handleOpenModal = () => {
     setEditingExpense(null);

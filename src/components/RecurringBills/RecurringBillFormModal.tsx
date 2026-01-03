@@ -19,7 +19,7 @@ interface RecurringBillFormModalProps {
 const recurringBillSchema = Joi.object({
   name: Joi.string().required().min(2).max(100),
   description: Joi.string().allow('').max(500).optional(),
-  amountCents: Joi.number().integer().positive().required().label('amount'),
+  amount: Joi.number().positive().required().label('amount'),
   frequency: Joi.string().valid('monthly').default('monthly'),
   dayOfMonth: Joi.number().integer().min(1).max(31).required().label('day of month'),
   categoryId: Joi.number().integer().positive().required().label('category'),
@@ -44,6 +44,9 @@ const RecurringBillFormModal = ({
 
   const handleSubmit = async (data: Record<string, unknown>) => {
     try {
+      // Convert dollars to cents for API
+      const amountCents = Math.round(Number(data.amount) * 100);
+
       if (isEditing && editingBill) {
         // Update existing recurring bill
         const response = await httpService<RecurringBill>({
@@ -52,7 +55,7 @@ const RecurringBillFormModal = ({
           data: {
             name: data.name,
             description: data.description || undefined,
-            amountCents: Number(data.amountCents),
+            amountCents,
             frequency: data.frequency,
             dayOfMonth: Number(data.dayOfMonth),
             categoryId: Number(data.categoryId),
@@ -76,7 +79,7 @@ const RecurringBillFormModal = ({
           data: {
             name: data.name,
             description: data.description || undefined,
-            amountCents: Number(data.amountCents),
+            amountCents,
             frequency: data.frequency || 'monthly',
             dayOfMonth: Number(data.dayOfMonth),
             categoryId: Number(data.categoryId),
@@ -124,7 +127,8 @@ const RecurringBillFormModal = ({
       if (editingBill) {
         setValue('name', editingBill.name);
         setValue('description', editingBill.description || '');
-        setValue('amountCents', editingBill.amountCents);
+        // Convert cents to dollars for display
+        setValue('amount', editingBill.amountCents / 100);
         setValue('frequency', editingBill.frequency);
         setValue('dayOfMonth', editingBill.dayOfMonth);
         setValue('categoryId', editingBill.categoryId);
@@ -170,12 +174,12 @@ const RecurringBillFormModal = ({
             <Grid size={6}>
               {renderTextInput({
                 type: 'number',
-                name: 'amountCents',
-                label: 'Amount (in cents)',
-                placeholder: '0',
+                name: 'amount',
+                label: 'Amount',
+                placeholder: '0.00',
                 required: true,
                 textFieldProps: {
-                  inputProps: { step: '1', min: '1' },
+                  inputProps: { step: '0.01', min: '0.01' },
                 },
               })}
             </Grid>
