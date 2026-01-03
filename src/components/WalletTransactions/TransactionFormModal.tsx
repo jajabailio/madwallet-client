@@ -23,7 +23,7 @@ interface TransactionFormModalProps {
 // Joi validation schema for income transaction
 const incomeSchema = Joi.object({
   description: Joi.string().required().min(2).max(500),
-  amountCents: Joi.number().integer().positive().required().label('amount'),
+  amount: Joi.number().positive().required().label('amount'),
   date: Joi.date().required().max('now').label('date'),
   walletId: Joi.number().integer().positive().required().label('wallet'),
 });
@@ -31,7 +31,7 @@ const incomeSchema = Joi.object({
 // Joi validation schema for transfer transaction
 const transferSchema = Joi.object({
   description: Joi.string().required().min(2).max(500),
-  amountCents: Joi.number().integer().positive().required().label('amount'),
+  amount: Joi.number().positive().required().label('amount'),
   date: Joi.date().required().max('now').label('date'),
   fromWalletId: Joi.number().integer().positive().required().label('from wallet'),
   toWalletId: Joi.number().integer().positive().required().label('to wallet'),
@@ -59,12 +59,16 @@ const TransactionFormModal = ({ open, onClose }: TransactionFormModalProps) => {
 
   const handleIncomeSubmit = async (data: Record<string, unknown>) => {
     try {
+      // Convert amount from dollars to cents
+      const amountInDollars = Number(data.amount);
+      const amountCents = Math.round(amountInDollars * 100);
+
       await httpService({
         method: 'post',
         url: '/wallet-transactions/income',
         data: {
           description: data.description,
-          amountCents: Number(data.amountCents),
+          amountCents,
           date: data.date,
           walletId: Number(data.walletId),
         },
@@ -89,12 +93,16 @@ const TransactionFormModal = ({ open, onClose }: TransactionFormModalProps) => {
 
   const handleTransferSubmit = async (data: Record<string, unknown>) => {
     try {
+      // Convert amount from dollars to cents
+      const amountInDollars = Number(data.amount);
+      const amountCents = Math.round(amountInDollars * 100);
+
       await httpService({
         method: 'post',
         url: '/wallet-transactions/transfer',
         data: {
           description: data.description,
-          amountCents: Number(data.amountCents),
+          amountCents,
           date: data.date,
           fromWalletId: Number(data.fromWalletId),
           toWalletId: Number(data.toWalletId),
@@ -169,12 +177,12 @@ const TransactionFormModal = ({ open, onClose }: TransactionFormModalProps) => {
               })}
               {incomeForm.renderTextInput({
                 type: 'number',
-                name: 'amountCents',
-                label: 'Amount (in cents)',
-                placeholder: '0',
+                name: 'amount',
+                label: 'Amount',
+                placeholder: '0.00',
                 required: true,
                 textFieldProps: {
-                  inputProps: { step: '1', min: '1' },
+                  inputProps: { step: '0.01', min: '0.01' },
                 },
               })}
               {incomeForm.renderTextInput({
@@ -215,12 +223,12 @@ const TransactionFormModal = ({ open, onClose }: TransactionFormModalProps) => {
               })}
               {transferForm.renderTextInput({
                 type: 'number',
-                name: 'amountCents',
-                label: 'Amount (in cents)',
-                placeholder: '0',
+                name: 'amount',
+                label: 'Amount',
+                placeholder: '0.00',
                 required: true,
                 textFieldProps: {
-                  inputProps: { step: '1', min: '1' },
+                  inputProps: { step: '0.01', min: '0.01' },
                 },
               })}
               {transferForm.renderTextInput({

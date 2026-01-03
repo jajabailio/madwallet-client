@@ -18,7 +18,7 @@ const walletSchema = Joi.object({
   name: Joi.string().required().min(2).max(100),
   description: Joi.string().allow('').max(500).optional(),
   type: Joi.string().required().valid('bank_account', 'e_wallet', 'cash', 'savings'),
-  balanceCents: Joi.number().integer().optional().label('initial balance'),
+  balance: Joi.number().min(0).optional().label('initial balance'),
   currency: Joi.string().length(3).optional().label('currency'),
   isActive: Joi.boolean().optional(),
 });
@@ -51,6 +51,10 @@ const WalletFormModal = ({ open, onClose, editingWallet }: WalletFormModalProps)
         onClose();
       } else {
         // Create new wallet
+        // Convert balance from dollars to cents
+        const balanceInDollars = data.balance ? Number(data.balance) : 0;
+        const balanceCents = Math.round(balanceInDollars * 100);
+
         await httpService({
           method: 'post',
           url: '/wallets',
@@ -58,7 +62,7 @@ const WalletFormModal = ({ open, onClose, editingWallet }: WalletFormModalProps)
             name: data.name,
             description: data.description,
             type: data.type,
-            balanceCents: data.balanceCents ? Number(data.balanceCents) : 0,
+            balanceCents,
             currency: data.currency || 'PHP',
           },
         });
@@ -107,7 +111,7 @@ const WalletFormModal = ({ open, onClose, editingWallet }: WalletFormModalProps)
         setValue('isActive', editingWallet.isActive);
       } else {
         setValue('type', 'bank_account');
-        setValue('balanceCents', 0);
+        setValue('balance', 0);
         setValue('currency', 'PHP');
         setValue('isActive', true);
       }
@@ -148,11 +152,11 @@ const WalletFormModal = ({ open, onClose, editingWallet }: WalletFormModalProps)
                 <Grid size={6}>
                   {renderTextInput({
                     type: 'number',
-                    name: 'balanceCents',
-                    label: 'Initial Balance (in cents)',
-                    placeholder: '0',
+                    name: 'balance',
+                    label: 'Initial Balance',
+                    placeholder: '0.00',
                     textFieldProps: {
-                      inputProps: { step: '1', min: '0' },
+                      inputProps: { step: '0.01', min: '0' },
                     },
                   })}
                 </Grid>
