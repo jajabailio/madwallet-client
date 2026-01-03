@@ -4,6 +4,7 @@ import type { Category } from '../types';
 
 interface CategoriesContextType {
   categories: Category[];
+  setCategories: React.Dispatch<React.SetStateAction<Category[]>>;
   loading: boolean;
   refreshCategories: () => Promise<void>;
 }
@@ -38,7 +39,7 @@ export const CategoriesProvider = ({ children }: { children: React.ReactNode }) 
   };
 
   return (
-    <CategoriesContext.Provider value={{ categories, loading, refreshCategories }}>
+    <CategoriesContext.Provider value={{ categories, setCategories, loading, refreshCategories }}>
       {children}
     </CategoriesContext.Provider>
   );

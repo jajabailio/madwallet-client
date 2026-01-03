@@ -26,15 +26,30 @@ const walletSchema = Joi.object({
 const WalletFormModal = ({ open, onClose, editingWallet }: WalletFormModalProps) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
-  const { refreshWallets } = useWallets();
+  const { wallets, setWallets, refreshWallets } = useWallets();
   const { refreshSummary } = useDashboard();
   const isEditing = !!editingWallet;
 
   const handleSubmit = async (data: Record<string, unknown>) => {
-    try {
-      if (isEditing && editingWallet) {
-        // Update existing wallet
-        await httpService({
+    if (isEditing && editingWallet) {
+      // Update existing wallet
+      const previousWallets = [...wallets];
+
+      // Optimistic update
+      const updatedWallet: Wallet = {
+        ...editingWallet,
+        name: data.name as string,
+        description: data.description as string,
+        type: data.type as string,
+        isActive: data.isActive as boolean,
+        updatedAt: new Date(),
+      };
+
+      setWallets(wallets.map((w) => (w.id === editingWallet.id ? updatedWallet : w)));
+      onClose();
+
+      try {
+        const response = await httpService<{ data: Wallet }>({
           method: 'put',
           url: `/wallets/${editingWallet.id}`,
           data: {
@@ -45,17 +60,52 @@ const WalletFormModal = ({ open, onClose, editingWallet }: WalletFormModalProps)
           },
         });
 
-        await refreshWallets();
+        setWallets((prev) =>
+          prev.map((wallet) => (wallet.id === editingWallet.id ? response.data.data : wallet)),
+        );
+
         await refreshSummary();
         toast.success('Wallet updated successfully!');
-        onClose();
-      } else {
-        // Create new wallet
-        // Convert balance from dollars to cents
-        const balanceInDollars = data.balance ? Number(data.balance) : 0;
-        const balanceCents = Math.round(balanceInDollars * 100);
+      } catch (error) {
+        setWallets(previousWallets);
+        if (error && typeof error === 'object' && 'response' in error) {
+          const axiosError = error as { response?: { data?: { error?: string } } };
+          const errorMessage =
+            axiosError.response?.data?.error || 'Failed to update wallet. Please try again.';
+          toast.error(errorMessage);
+        } else {
+          toast.error('Failed to update wallet. Please try again.');
+        }
+        console.error('Failed to update wallet:', error);
+      }
+    } else {
+      // Create new wallet
+      // Convert balance from dollars to cents
+      const balanceInDollars = data.balance ? Number(data.balance) : 0;
+      const balanceCents = Math.round(balanceInDollars * 100);
 
-        await httpService({
+      // Optimistic wallet
+      const optimisticWallet: Wallet = {
+        id: -Date.now(),
+        name: data.name as string,
+        description: data.description as string,
+        type: data.type as string,
+        balanceCents,
+        currency: (data.currency as string) || 'PHP',
+        isActive: true,
+        isDeleted: false,
+        userId: 0, // Will be set by server
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      const previousWallets = [...wallets];
+
+      setWallets([optimisticWallet, ...wallets]);
+      onClose();
+
+      try {
+        const response = await httpService<{ data: Wallet }>({
           method: 'post',
           url: '/wallets',
           data: {
@@ -67,22 +117,24 @@ const WalletFormModal = ({ open, onClose, editingWallet }: WalletFormModalProps)
           },
         });
 
-        await refreshWallets();
+        setWallets((prev) =>
+          prev.map((wallet) => (wallet.id === optimisticWallet.id ? response.data.data : wallet)),
+        );
+
         await refreshSummary();
         toast.success('Wallet created successfully!');
-        onClose();
+      } catch (error) {
+        setWallets(previousWallets);
+        if (error && typeof error === 'object' && 'response' in error) {
+          const axiosError = error as { response?: { data?: { error?: string } } };
+          const errorMessage =
+            axiosError.response?.data?.error || 'Failed to create wallet. Please try again.';
+          toast.error(errorMessage);
+        } else {
+          toast.error('Failed to create wallet. Please try again.');
+        }
+        console.error('Failed to create wallet:', error);
       }
-    } catch (error) {
-      if (error && typeof error === 'object' && 'response' in error) {
-        const axiosError = error as { response?: { data?: { error?: string } } };
-        const errorMessage =
-          axiosError.response?.data?.error ||
-          `Failed to ${isEditing ? 'update' : 'create'} wallet. Please try again.`;
-        toast.error(errorMessage);
-      } else {
-        toast.error(`Failed to ${isEditing ? 'update' : 'create'} wallet. Please try again.`);
-      }
-      console.error(`Failed to ${isEditing ? 'update' : 'create'} wallet:`, error);
     }
   };
 

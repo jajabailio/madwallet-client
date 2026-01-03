@@ -79,15 +79,20 @@ const ExpenseManager = () => {
       return;
     }
 
+    // Optimistic update - remove from UI immediately
+    const previousExpenses = [...expenses];
+    setExpenses(expenses.filter((expense) => expense.id !== id));
+
     try {
       await httpService({
         method: 'delete',
         url: `/expenses/${id}`,
       });
 
-      setExpenses(expenses.filter((expense) => expense.id !== id));
       toast.success('Expense deleted successfully!');
     } catch (error) {
+      // Rollback on error
+      setExpenses(previousExpenses);
       toast.error('Failed to delete expense');
       console.error('Failed to delete expense:', error);
     }

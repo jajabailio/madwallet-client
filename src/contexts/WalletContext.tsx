@@ -4,6 +4,7 @@ import { httpService } from '../services';
 
 interface WalletContextType {
 	wallets: Wallet[];
+	setWallets: React.Dispatch<React.SetStateAction<Wallet[]>>;
 	loading: boolean;
 	refreshWallets: () => Promise<void>;
 }
@@ -38,7 +39,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
 	};
 
 	return (
-		<WalletContext.Provider value={{ wallets, loading, refreshWallets }}>
+		<WalletContext.Provider value={{ wallets, setWallets, loading, refreshWallets }}>
 			{children}
 		</WalletContext.Provider>
 	);

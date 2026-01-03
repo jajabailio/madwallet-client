@@ -48,8 +48,8 @@ const transferSchema = Joi.object({
 const TransactionFormModal = ({ open, onClose }: TransactionFormModalProps) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
-  const { wallets } = useWallets();
-  const { refreshTransactions } = useWalletTransactions();
+  const { wallets, setWallets } = useWallets();
+  const { transactions, setTransactions } = useWalletTransactions();
   const { refreshSummary } = useDashboard();
   const [tabValue, setTabValue] = useState(0);
 
@@ -58,27 +58,71 @@ const TransactionFormModal = ({ open, onClose }: TransactionFormModalProps) => {
   };
 
   const handleIncomeSubmit = async (data: Record<string, unknown>) => {
-    try {
-      // Convert amount from dollars to cents
-      const amountInDollars = Number(data.amount);
-      const amountCents = Math.round(amountInDollars * 100);
+    // Convert amount from dollars to cents
+    const amountInDollars = Number(data.amount);
+    const amountCents = Math.round(amountInDollars * 100);
+    const walletId = Number(data.walletId);
 
-      await httpService({
+    // Find the wallet to update
+    const wallet = wallets.find((w) => w.id === walletId);
+    if (!wallet) {
+      toast.error('Wallet not found');
+      return;
+    }
+
+    // Create optimistic transaction
+    const optimisticTransaction = {
+      id: -Date.now(),
+      description: data.description as string,
+      amountCents,
+      type: 'income' as const,
+      date: new Date(data.date as string),
+      walletId,
+      balanceAfterCents: wallet.balanceCents + amountCents,
+      userId: 0,
+      createdAt: new Date(),
+    };
+
+    // Store previous state for rollback
+    const previousTransactions = [...transactions];
+    const previousWallets = [...wallets];
+
+    // Optimistic updates
+    setTransactions([optimisticTransaction, ...transactions]);
+    setWallets(
+      wallets.map((w) =>
+        w.id === walletId ? { ...w, balanceCents: w.balanceCents + amountCents } : w,
+      ),
+    );
+    onClose();
+
+    try {
+      const response = await httpService<{ data: any }>({
         method: 'post',
         url: '/wallet-transactions/income',
         data: {
           description: data.description,
           amountCents,
           date: data.date,
-          walletId: Number(data.walletId),
+          walletId,
         },
       });
 
-      await refreshTransactions();
+      // Replace optimistic transaction with server response
+      setTransactions((prev) =>
+        prev.map((t) => (t.id === optimisticTransaction.id ? response.data.data.transaction : t)),
+      );
+      setWallets((prev) =>
+        prev.map((w) => (w.id === walletId ? response.data.data.wallet : w)),
+      );
+
       await refreshSummary();
       toast.success('Income transaction added successfully!');
-      onClose();
     } catch (error) {
+      // Rollback on error
+      setTransactions(previousTransactions);
+      setWallets(previousWallets);
+
       if (error && typeof error === 'object' && 'response' in error) {
         const axiosError = error as { response?: { data?: { error?: string } } };
         const errorMessage =
@@ -92,28 +136,100 @@ const TransactionFormModal = ({ open, onClose }: TransactionFormModalProps) => {
   };
 
   const handleTransferSubmit = async (data: Record<string, unknown>) => {
-    try {
-      // Convert amount from dollars to cents
-      const amountInDollars = Number(data.amount);
-      const amountCents = Math.round(amountInDollars * 100);
+    // Convert amount from dollars to cents
+    const amountInDollars = Number(data.amount);
+    const amountCents = Math.round(amountInDollars * 100);
+    const fromWalletId = Number(data.fromWalletId);
+    const toWalletId = Number(data.toWalletId);
 
-      await httpService({
+    // Find the wallets
+    const fromWallet = wallets.find((w) => w.id === fromWalletId);
+    const toWallet = wallets.find((w) => w.id === toWalletId);
+
+    if (!fromWallet || !toWallet) {
+      toast.error('Wallet not found');
+      return;
+    }
+
+    // Create optimistic transactions (transfer creates 2 transactions)
+    const optimisticTransactionFrom = {
+      id: -Date.now(),
+      description: data.description as string,
+      amountCents,
+      type: 'transfer' as const,
+      date: new Date(data.date as string),
+      walletId: fromWalletId,
+      balanceAfterCents: fromWallet.balanceCents - amountCents,
+      userId: 0,
+      createdAt: new Date(),
+    };
+
+    const optimisticTransactionTo = {
+      id: -Date.now() - 1,
+      description: data.description as string,
+      amountCents,
+      type: 'transfer' as const,
+      date: new Date(data.date as string),
+      walletId: toWalletId,
+      balanceAfterCents: toWallet.balanceCents + amountCents,
+      userId: 0,
+      createdAt: new Date(),
+    };
+
+    // Store previous state for rollback
+    const previousTransactions = [...transactions];
+    const previousWallets = [...wallets];
+
+    // Optimistic updates
+    setTransactions([optimisticTransactionFrom, optimisticTransactionTo, ...transactions]);
+    setWallets(
+      wallets.map((w) => {
+        if (w.id === fromWalletId) {
+          return { ...w, balanceCents: w.balanceCents - amountCents };
+        }
+        if (w.id === toWalletId) {
+          return { ...w, balanceCents: w.balanceCents + amountCents };
+        }
+        return w;
+      }),
+    );
+    onClose();
+
+    try {
+      const response = await httpService<{ data: any }>({
         method: 'post',
         url: '/wallet-transactions/transfer',
         data: {
           description: data.description,
           amountCents,
           date: data.date,
-          fromWalletId: Number(data.fromWalletId),
-          toWalletId: Number(data.toWalletId),
+          fromWalletId,
+          toWalletId,
         },
       });
 
-      await refreshTransactions();
+      // Replace optimistic transactions with server response
+      setTransactions((prev) => {
+        const filtered = prev.filter(
+          (t) => t.id !== optimisticTransactionFrom.id && t.id !== optimisticTransactionTo.id,
+        );
+        return [...response.data.data.transactions, ...filtered];
+      });
+
+      setWallets((prev) =>
+        prev.map((w) => {
+          const updatedWallet = response.data.data.wallets.find((uw: any) => uw.id === w.id);
+          return updatedWallet || w;
+        }),
+      );
+
       await refreshSummary();
       toast.success('Transfer completed successfully!');
-      onClose();
     } catch (error) {
+      // Rollback on error
+      setTransactions(previousTransactions);
+      setWallets(previousWallets);
+
       if (error && typeof error === 'object' && 'response' in error) {
         const axiosError = error as { response?: { data?: { error?: string } } };
         const errorMessage =

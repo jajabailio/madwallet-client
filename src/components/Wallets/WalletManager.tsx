@@ -9,7 +9,7 @@ import WalletFormModal from './WalletFormModal';
 import WalletList from './WalletList';
 
 const WalletManager = () => {
-  const { wallets, loading, refreshWallets } = useWallets();
+  const { wallets, setWallets, loading, refreshWallets } = useWallets();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingWallet, setEditingWallet] = useState<Wallet | null>(null);
   const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
@@ -34,15 +34,20 @@ const WalletManager = () => {
       return;
     }
 
+    // Optimistic update - remove from UI immediately
+    const previousWallets = [...wallets];
+    setWallets(wallets.filter((wallet) => wallet.id !== id));
+
     try {
       await httpService({
         method: 'delete',
         url: `/wallets/${id}`,
       });
 
-      await refreshWallets();
       toast.success('Wallet deleted successfully!');
     } catch (error) {
+      // Rollback on error
+      setWallets(previousWallets);
       toast.error('Failed to delete wallet');
       console.error('Failed to delete wallet:', error);
     }

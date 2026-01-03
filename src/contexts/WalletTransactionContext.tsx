@@ -4,6 +4,7 @@ import { httpService } from '../services';
 
 interface WalletTransactionContextType {
 	transactions: WalletTransaction[];
+	setTransactions: React.Dispatch<React.SetStateAction<WalletTransaction[]>>;
 	loading: boolean;
 	refreshTransactions: () => Promise<void>;
 }
@@ -41,7 +42,7 @@ export const WalletTransactionProvider = ({ children }: { children: React.ReactN
 
 	return (
 		<WalletTransactionContext.Provider
-			value={{ transactions, loading, refreshTransactions }}
+			value={{ transactions, setTransactions, loading, refreshTransactions }}
 		>
 			{children}
 		</WalletTransactionContext.Provider>
