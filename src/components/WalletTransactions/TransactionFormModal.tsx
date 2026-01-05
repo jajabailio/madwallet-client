@@ -72,7 +72,7 @@ const TransactionFormModal = ({ open, onClose }: TransactionFormModalProps) => {
     }
 
     // Create optimistic transaction
-    const optimisticTransaction = {
+    const optimisticTransaction: WalletTransaction = {
       id: -Date.now(),
       description: data.description as string,
       amountCents,
@@ -82,6 +82,8 @@ const TransactionFormModal = ({ open, onClose }: TransactionFormModalProps) => {
       balanceAfterCents: wallet.balanceCents + amountCents,
       userId: 0,
       createdAt: new Date(),
+      updatedAt: new Date(),
+      isDeleted: false,
     };
 
     // Store previous state for rollback
@@ -153,7 +155,7 @@ const TransactionFormModal = ({ open, onClose }: TransactionFormModalProps) => {
     }
 
     // Create optimistic transactions (transfer creates 2 transactions)
-    const optimisticTransactionFrom = {
+    const optimisticTransactionFrom: WalletTransaction = {
       id: -Date.now(),
       description: data.description as string,
       amountCents,
@@ -163,9 +165,11 @@ const TransactionFormModal = ({ open, onClose }: TransactionFormModalProps) => {
       balanceAfterCents: fromWallet.balanceCents - amountCents,
       userId: 0,
       createdAt: new Date(),
+      updatedAt: new Date(),
+      isDeleted: false,
     };
 
-    const optimisticTransactionTo = {
+    const optimisticTransactionTo: WalletTransaction = {
       id: -Date.now() - 1,
       description: data.description as string,
       amountCents,
@@ -175,6 +179,8 @@ const TransactionFormModal = ({ open, onClose }: TransactionFormModalProps) => {
       balanceAfterCents: toWallet.balanceCents + amountCents,
       userId: 0,
       createdAt: new Date(),
+      updatedAt: new Date(),
+      isDeleted: false,
     };
 
     // Store previous state for rollback

@@ -11,7 +11,9 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import type { Wallet } from '../../types';
+import { useCallback, useEffect, useState } from 'react';
+import { httpService } from '../../services';
+import type { Wallet, WalletTransaction } from '../../types';
 import { formatCurrency, formatDate } from '../../utils';
 
 interface WalletDetailsDrawerProps {
@@ -30,6 +32,32 @@ const DetailRow = ({ label, value }: { label: string; value: React.ReactNode }) 
 );
 
 const WalletDetailsDrawer = ({ wallet, open, onClose }: WalletDetailsDrawerProps) => {
+  const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
+  const [loadingTransactions, setLoadingTransactions] = useState(false);
+
+  const fetchTransactions = useCallback(async () => {
+    if (!wallet) return;
+
+    setLoadingTransactions(true);
+    try {
+      const response = await httpService<{ data: WalletTransaction[] }>({
+        method: 'get',
+        url: `/wallets/${wallet.id}/transactions`,
+      });
+      setTransactions(response.data.data);
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+    } finally {
+      setLoadingTransactions(false);
+    }
+  }, [wallet]);
+
+  useEffect(() => {
+    if (open && wallet) {
+      fetchTransactions();
+    }
+  }, [open, wallet, fetchTransactions]);
+
   if (!wallet) return null;
 
   const formatWalletType = (type: string): string => {

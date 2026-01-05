@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useStatuses } from '../../contexts';
 import { httpService } from '../../services';
+import type { Status } from '../../types';
 import FormBuilder from '../form/FormBuilder';
 
 interface StatusFormModalProps {

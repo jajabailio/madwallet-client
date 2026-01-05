@@ -66,11 +66,11 @@ const PaymentMethodDetailsDrawer = ({
     try {
       // Fetch summary and expenses in parallel
       const [summaryResponse, expensesResponse] = await Promise.all([
-        httpService<PaymentMethodSummary>({
+        httpService<{ data: PaymentMethodSummary }>({
           method: 'get',
           url: `/payment-methods/${paymentMethod.id}/summary`,
         }),
-        httpService<Expense[]>({
+        httpService<{ data: Expense[] }>({
           method: 'get',
           url: `/payment-methods/${paymentMethod.id}/expenses`,
         }),

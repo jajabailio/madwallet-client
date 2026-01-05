@@ -240,7 +240,7 @@ const ExpenseFormModal = ({
               name: 'date',
               label: 'Date',
               required: true,
-              defaultValue: new Date(),
+              defaultValue: new Date().toISOString().split('T')[0],
             })}
             <Grid size={12}>
               {renderButton({

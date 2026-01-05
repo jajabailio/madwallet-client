@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import { CATEGORY_COLOR_VALUES, DEFAULT_CATEGORY_COLOR } from '../../constants/colors';
 import { useCategories } from '../../contexts';
 import { httpService } from '../../services';
+import type { Category } from '../../types';
 import ColorPicker from '../form/ColorPicker';
 import FormBuilder from '../form/FormBuilder';
 
