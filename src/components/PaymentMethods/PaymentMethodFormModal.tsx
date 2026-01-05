@@ -50,11 +50,11 @@ const PaymentMethodFormModal = ({
       const requestData = {
         name: data.name,
         type: data.type,
-        description: data.description || undefined,
-        statementDate: data.statementDate ? Number(data.statementDate) : undefined,
-        paymentDueDate: data.paymentDueDate ? Number(data.paymentDueDate) : undefined,
+        description: data.description || '',
+        statementDate: data.statementDate ? Number(data.statementDate) : null,
+        paymentDueDate: data.paymentDueDate ? Number(data.paymentDueDate) : null,
         autoDeduct: Boolean(data.autoDeduct),
-        linkedWalletId: data.linkedWalletId ? Number(data.linkedWalletId) : undefined,
+        linkedWalletId: data.linkedWalletId ? Number(data.linkedWalletId) : null,
       };
 
       if (isEditing && editingPaymentMethod) {
