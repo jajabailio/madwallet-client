@@ -1,6 +1,5 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Box, Chip, IconButton } from '@mui/material';
 import type { PaymentMethod, TTableContent } from '../../types';
 import type { TTableData } from '../../types/table';
@@ -20,6 +19,13 @@ const PaymentMethodList = ({
   onDelete,
   onViewDetails,
 }: PaymentMethodListProps) => {
+  const handleRowClick = (rowKey: number | string) => {
+    const paymentMethod = paymentMethods.find((pm) => pm.id === rowKey);
+    if (paymentMethod) {
+      onViewDetails(paymentMethod);
+    }
+  };
+
   const headers: TTableContent[] = [
     {
       key: 'name',
@@ -122,16 +128,11 @@ const PaymentMethodList = ({
           <Box sx={{ display: 'flex', gap: 1 }}>
             <IconButton
               size="small"
-              color="info"
-              onClick={() => onViewDetails(paymentMethod)}
-              aria-label="view details"
-            >
-              <VisibilityIcon fontSize="small" />
-            </IconButton>
-            <IconButton
-              size="small"
               color="primary"
-              onClick={() => onEdit(paymentMethod)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(paymentMethod);
+              }}
               aria-label="edit"
             >
               <EditIcon fontSize="small" />
@@ -139,7 +140,10 @@ const PaymentMethodList = ({
             <IconButton
               size="small"
               color="error"
-              onClick={() => onDelete(paymentMethod.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(paymentMethod.id);
+              }}
               aria-label="delete"
             >
               <DeleteIcon fontSize="small" />
@@ -150,7 +154,7 @@ const PaymentMethodList = ({
     ],
   }));
 
-  return <DataTable data={data} headers={headers} />;
+  return <DataTable data={data} headers={headers} onRowClick={handleRowClick} />;
 };
 
 export default PaymentMethodList;
