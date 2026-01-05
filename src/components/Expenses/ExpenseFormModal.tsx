@@ -69,7 +69,7 @@ const ExpenseFormModal = ({
       const updatedExpense: Expense = {
         ...editingExpense,
         description: data.description as string,
-        amountCents: Number(data.amount),
+        amountCents: Math.round(Number(data.amount) * 100),
         categoryId,
         category,
         statusId,
@@ -89,7 +89,7 @@ const ExpenseFormModal = ({
           url: `/expenses/${editingExpense.id}`,
           data: {
             description: data.description,
-            amount: Number(data.amount),
+            amount: Math.round(Number(data.amount) * 100),
             categoryId,
             statusId,
             paymentMethodId,
@@ -114,7 +114,7 @@ const ExpenseFormModal = ({
       const optimisticExpense: Expense = {
         id: -Date.now(),
         description: data.description as string,
-        amountCents: Number(data.amount),
+        amountCents: Math.round(Number(data.amount) * 100),
         categoryId,
         category,
         statusId,
@@ -137,7 +137,7 @@ const ExpenseFormModal = ({
           url: '/expenses',
           data: {
             description: data.description,
-            amount: Number(data.amount),
+            amount: Math.round(Number(data.amount) * 100),
             categoryId,
             statusId,
             paymentMethodId,
@@ -179,7 +179,7 @@ const ExpenseFormModal = ({
       reset();
       if (editingExpense) {
         setValue('description', editingExpense.description);
-        setValue('amount', editingExpense.amountCents);
+        setValue('amount', editingExpense.amountCents / 100);
         setValue('categoryId', editingExpense.categoryId);
         setValue('statusId', editingExpense.statusId);
         setValue('paymentMethodId', editingExpense.paymentMethodId || '');
