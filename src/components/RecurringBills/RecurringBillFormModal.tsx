@@ -61,7 +61,6 @@ const RecurringBillFormModal = ({
             categoryId: Number(data.categoryId),
             statusId: Number(data.statusId),
             paymentMethodId: data.paymentMethodId ? Number(data.paymentMethodId) : undefined,
-            startDate: data.startDate,
           },
         });
 
@@ -230,6 +229,10 @@ const RecurringBillFormModal = ({
                 name: 'startDate',
                 label: 'Start Date',
                 required: true,
+                textFieldProps: {
+                  disabled: isEditing,
+                  helperText: isEditing ? 'Start date cannot be changed after creation' : undefined,
+                },
               })}
             </Grid>
             {renderSelect({
