@@ -1,12 +1,24 @@
 // Main App component - entry point for Mad Wallet
-import { Brightness4, Brightness7 } from '@mui/icons-material';
-import { Box, Button, Container, IconButton, Tooltip, Typography } from '@mui/material';
+import { Brightness4, Brightness7, Menu as MenuIcon } from '@mui/icons-material';
+import {
+  AppBar,
+  Box,
+  Button,
+  Container,
+  IconButton,
+  Toolbar,
+  Tooltip,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
+import { useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import CategoryManager from './components/Categories/CategoryManager';
-import Navigation from './components/common/Navigation';
+import Navigation, { SIDEBAR_WIDTH } from './components/common/Navigation';
 import SummaryBar from './components/common/SummaryBar';
 import ExpenseManager from './components/Expenses/ExpenseManager';
 import PaymentMethodManager from './components/PaymentMethods/PaymentMethodManager';
@@ -23,8 +35,8 @@ import {
   PurchasesProvider,
   StatusesProvider,
   ThemeProvider,
+  useTheme as useAppTheme,
   useAuth,
-  useTheme,
   WalletProvider,
   WalletTransactionProvider,
 } from './contexts';
@@ -32,10 +44,16 @@ import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 
-const AppHeader = () => {
+interface AppHeaderProps {
+  onMobileMenuOpen: () => void;
+}
+
+const AppHeader = ({ onMobileMenuOpen }: AppHeaderProps) => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const { mode, toggleTheme } = useTheme();
+  const { mode, toggleTheme } = useAppTheme();
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
   const handleLogout = () => {
     logout();
@@ -43,31 +61,92 @@ const AppHeader = () => {
   };
 
   return (
-    <Box sx={{ bgcolor: 'background.paper', boxShadow: 1, mb: 3 }}>
-      <Container maxWidth="lg" sx={{ py: 2 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>
-            Mad Wallet
+    <AppBar
+      position="fixed"
+      sx={{
+        width: { md: `calc(100% - ${SIDEBAR_WIDTH}px)` },
+        ml: { md: `${SIDEBAR_WIDTH}px` },
+        bgcolor: 'background.paper',
+        color: 'text.primary',
+        boxShadow: 1,
+      }}
+    >
+      <Toolbar>
+        {!isDesktop && (
+          <IconButton
+            color="inherit"
+            aria-label="open navigation"
+            edge="start"
+            onClick={onMobileMenuOpen}
+            sx={{ mr: 2 }}
+          >
+            <MenuIcon />
+          </IconButton>
+        )}
+
+        <Typography variant="h6" component="h1" sx={{ fontWeight: 'bold', flexGrow: 1 }}>
+          Mad Wallet
+        </Typography>
+
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Tooltip title={mode === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}>
+            <IconButton onClick={toggleTheme} color="inherit">
+              {mode === 'light' ? <Brightness4 /> : <Brightness7 />}
+            </IconButton>
+          </Tooltip>
+          <Typography
+            variant="body2"
+            color="textSecondary"
+            sx={{ display: { xs: 'none', sm: 'block' } }}
+          >
+            {user?.firstName} {user?.lastName}
           </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Tooltip title={mode === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}>
-              <IconButton onClick={toggleTheme} color="inherit">
-                {mode === 'light' ? <Brightness4 /> : <Brightness7 />}
-              </IconButton>
-            </Tooltip>
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              sx={{ display: { xs: 'none', sm: 'block' } }}
-            >
-              {user?.firstName} {user?.lastName}
-            </Typography>
-            <Button variant="outlined" size="small" onClick={handleLogout}>
-              Logout
-            </Button>
-          </Box>
+          <Button variant="outlined" size="small" onClick={handleLogout}>
+            Logout
+          </Button>
         </Box>
-      </Container>
+      </Toolbar>
+    </AppBar>
+  );
+};
+
+const AuthenticatedLayout = () => {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleMobileOpen = () => setMobileOpen(true);
+  const handleMobileClose = () => setMobileOpen(false);
+
+  return (
+    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
+      <Navigation mobileOpen={mobileOpen} onMobileClose={handleMobileClose} />
+
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          width: { md: `calc(100% - ${SIDEBAR_WIDTH}px)` },
+        }}
+      >
+        <AppHeader onMobileMenuOpen={handleMobileOpen} />
+
+        <Toolbar />
+
+        <Container maxWidth="lg" sx={{ py: 3 }}>
+          <SummaryBar />
+
+          <Routes>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/expenses" element={<ExpenseManager />} />
+            <Route path="/categories" element={<CategoryManager />} />
+            <Route path="/payment-methods" element={<PaymentMethodManager />} />
+            <Route path="/purchases" element={<PurchaseManager />} />
+            <Route path="/recurring-bills" element={<RecurringBillManager />} />
+            <Route path="/statuses" element={<StatusManager />} />
+            <Route path="/wallets" element={<WalletManager />} />
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        </Container>
+      </Box>
     </Box>
   );
 };
@@ -95,38 +174,7 @@ const App = () => {
                             <WalletProvider>
                               <WalletTransactionProvider>
                                 <DashboardProvider>
-                                  <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-                                    <AppHeader />
-
-                                    <Container maxWidth="lg" sx={{ mb: 3 }}>
-                                      <SummaryBar />
-                                    </Container>
-
-                                    <Container maxWidth="lg" sx={{ py: 2 }}>
-                                      <Navigation />
-
-                                      <Routes>
-                                        <Route path="/dashboard" element={<Dashboard />} />
-                                        <Route path="/expenses" element={<ExpenseManager />} />
-                                        <Route path="/categories" element={<CategoryManager />} />
-                                        <Route
-                                          path="/payment-methods"
-                                          element={<PaymentMethodManager />}
-                                        />
-                                        <Route path="/purchases" element={<PurchaseManager />} />
-                                        <Route
-                                          path="/recurring-bills"
-                                          element={<RecurringBillManager />}
-                                        />
-                                        <Route path="/statuses" element={<StatusManager />} />
-                                        <Route path="/wallets" element={<WalletManager />} />
-                                        <Route
-                                          path="/"
-                                          element={<Navigate to="/dashboard" replace />}
-                                        />
-                                      </Routes>
-                                    </Container>
-                                  </Box>
+                                  <AuthenticatedLayout />
                                 </DashboardProvider>
                               </WalletTransactionProvider>
                             </WalletProvider>

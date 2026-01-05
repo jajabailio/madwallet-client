@@ -1,98 +1,111 @@
-import { Menu as MenuIcon } from '@mui/icons-material';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import CategoryIcon from '@mui/icons-material/Category';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import EventRepeatIcon from '@mui/icons-material/EventRepeat';
+import ReceiptIcon from '@mui/icons-material/Receipt';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import {
   Box,
   Divider,
   Drawer,
-  IconButton,
   List,
   ListItem,
   ListItemButton,
+  ListItemIcon,
   ListItemText,
-  Tab,
-  Tabs,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
-import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { SIDEBAR_WIDTH, styles } from './Navigation.styles';
 
-const Navigation = () => {
+interface NavItem {
+  label: string;
+  path: string;
+  icon: React.ReactNode;
+}
+
+const navItems: NavItem[] = [
+  { label: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> },
+  { label: 'Expenses', path: '/expenses', icon: <ReceiptIcon /> },
+  { label: 'Categories', path: '/categories', icon: <CategoryIcon /> },
+  { label: 'Payment Methods', path: '/payment-methods', icon: <CreditCardIcon /> },
+  { label: 'Purchases', path: '/purchases', icon: <ShoppingCartIcon /> },
+  { label: 'Recurring Bills', path: '/recurring-bills', icon: <EventRepeatIcon /> },
+  { label: 'Statuses', path: '/statuses', icon: <AssignmentIcon /> },
+  { label: 'Wallets', path: '/wallets', icon: <AccountBalanceWalletIcon /> },
+];
+
+interface NavigationProps {
+  mobileOpen: boolean;
+  onMobileClose: () => void;
+}
+
+const Navigation = ({ mobileOpen, onMobileClose }: NavigationProps) => {
   const location = useLocation();
   const currentPath = location.pathname;
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
-  const navItems = [
-    { label: 'Dashboard', path: '/dashboard' },
-    { label: 'Expenses', path: '/expenses' },
-    { label: 'Categories', path: '/categories' },
-    { label: 'Payment Methods', path: '/payment-methods' },
-    { label: 'Purchases', path: '/purchases' },
-    { label: 'Recurring Bills', path: '/recurring-bills' },
-    { label: 'Statuses', path: '/statuses' },
-    { label: 'Wallets', path: '/wallets' },
-  ];
+  const drawerContent = (
+    <Box sx={styles.drawerContent}>
+      {!isDesktop && (
+        <>
+          <Box sx={styles.brandSection}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+              Mad Wallet
+            </Typography>
+          </Box>
+          <Divider />
+        </>
+      )}
+
+      {isDesktop && <Box sx={styles.toolbarSpacer} />}
+
+      <List sx={styles.navList}>
+        {navItems.map((item) => (
+          <ListItem key={item.path} disablePadding>
+            <ListItemButton
+              component={Link}
+              to={item.path}
+              selected={currentPath === item.path}
+              onClick={!isDesktop ? onMobileClose : undefined}
+              sx={styles.navItem}
+            >
+              <ListItemIcon sx={styles.navIcon}>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.label} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
 
   return (
     <>
-      <Box
-        sx={{
-          borderBottom: 1,
-          borderColor: 'divider',
-          mb: 3,
-        }}
-      >
-        {/* Mobile Menu Button */}
-        <IconButton
-          onClick={() => setMobileMenuOpen(true)}
-          sx={{ display: { xs: 'block', md: 'none' }, mb: 1 }}
-        >
-          <MenuIcon />
-        </IconButton>
+      {isDesktop && (
+        <Drawer variant="permanent" sx={styles.permanentDrawer}>
+          {drawerContent}
+        </Drawer>
+      )}
 
-        {/* Desktop Tabs */}
-        <Tabs
-          value={currentPath}
-          aria-label="navigation tabs"
-          variant="scrollable"
-          scrollButtons="auto"
-          sx={{ display: { xs: 'none', md: 'flex' } }}
+      {!isDesktop && (
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={onMobileClose}
+          ModalProps={{ keepMounted: true }}
+          sx={styles.temporaryDrawer}
         >
-          {navItems.map((item) => (
-            <Tab
-              key={item.path}
-              label={item.label}
-              value={item.path}
-              component={Link}
-              to={item.path}
-            />
-          ))}
-        </Tabs>
-      </Box>
-
-      {/* Mobile Drawer Menu */}
-      <Drawer anchor="left" open={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)}>
-        <Box sx={{ width: 250, pt: 2 }}>
-          <Box sx={{ px: 2, pb: 2 }}>
-            <Typography variant="h6">Mad Wallet</Typography>
-          </Box>
-          <Divider />
-          <List>
-            {navItems.map((item) => (
-              <ListItem key={item.path} disablePadding>
-                <ListItemButton
-                  component={Link}
-                  to={item.path}
-                  selected={currentPath === item.path}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <ListItemText primary={item.label} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      </Drawer>
+          {drawerContent}
+        </Drawer>
+      )}
     </>
   );
 };
 
+export { SIDEBAR_WIDTH };
 export default Navigation;
