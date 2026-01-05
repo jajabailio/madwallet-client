@@ -20,26 +20,32 @@ const ExpenseList = ({ expenses, onEdit, onDelete, onViewDetails, onPay }: Expen
     {
       key: 'description',
       content: 'Description',
+      sortable: true,
     },
     {
       key: 'category',
       content: 'Category',
+      sortable: true,
     },
     {
       key: 'amount',
       content: 'Amount',
+      sortable: true,
     },
     {
       key: 'date',
       content: 'Date',
+      sortable: true,
     },
     {
       key: 'status',
       content: 'Status',
+      sortable: true,
     },
     {
       key: 'actions',
       content: 'Actions',
+      sortable: false,
     },
   ];
 
@@ -59,6 +65,7 @@ const ExpenseList = ({ expenses, onEdit, onDelete, onViewDetails, onPay }: Expen
             )}
           </Box>
         ),
+        sortValue: expense.description,
       },
       {
         key: 'category',
@@ -73,14 +80,17 @@ const ExpenseList = ({ expenses, onEdit, onDelete, onViewDetails, onPay }: Expen
             }}
           />
         ),
+        sortValue: expense.category.name,
       },
       {
         key: 'amount',
         content: formatCurrency(expense.amountCents),
+        sortValue: expense.amountCents,
       },
       {
         key: 'date',
         content: formatDate(expense.date),
+        sortValue: new Date(expense.date),
       },
       {
         key: 'status',
@@ -94,6 +104,7 @@ const ExpenseList = ({ expenses, onEdit, onDelete, onViewDetails, onPay }: Expen
         ) : (
           <Chip label="Unknown" color="default" size="small" variant="outlined" />
         ),
+        sortValue: expense.status?.name ?? '',
       },
       {
         key: 'actions',
@@ -147,7 +158,15 @@ const ExpenseList = ({ expenses, onEdit, onDelete, onViewDetails, onPay }: Expen
     }
   };
 
-  return <DataTable data={data} headers={headers} onRowClick={handleRowClick} />;
+  return (
+    <DataTable
+      data={data}
+      headers={headers}
+      onRowClick={handleRowClick}
+      defaultSortKey="date"
+      defaultSortDirection="desc"
+    />
+  );
 };
 
 export default ExpenseList;

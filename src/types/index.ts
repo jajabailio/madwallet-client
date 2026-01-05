@@ -11,6 +11,6 @@ export type {
 export type { Purchase } from './purchase';
 export type { RecurringBill, RecurringBillFrequency } from './recurring-bill';
 export type { Status } from './status';
-export type { TTableContent } from './table';
+export type { SortDirection, TTableContent, TTableData } from './table';
 export type { Wallet } from './wallet';
 export type { WalletTransaction } from './wallet-transaction';
