@@ -1,3 +1,4 @@
+// Main App component - entry point for Mad Wallet
 import { Brightness4, Brightness7 } from '@mui/icons-material';
 import { Box, Button, Container, IconButton, Tooltip, Typography } from '@mui/material';
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
