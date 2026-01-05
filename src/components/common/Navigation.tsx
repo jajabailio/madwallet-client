@@ -63,8 +63,6 @@ const Navigation = ({ mobileOpen, onMobileClose }: NavigationProps) => {
         </>
       )}
 
-      {isDesktop && <Box sx={styles.toolbarSpacer} />}
-
       <List sx={styles.navList}>
         {navItems.map((item) => (
           <ListItem key={item.path} disablePadding>

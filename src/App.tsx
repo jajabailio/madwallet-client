@@ -64,11 +64,10 @@ const AppHeader = ({ onMobileMenuOpen }: AppHeaderProps) => {
     <AppBar
       position="fixed"
       sx={{
-        width: { md: `calc(100% - ${SIDEBAR_WIDTH}px)` },
-        ml: { md: `${SIDEBAR_WIDTH}px` },
         bgcolor: 'background.paper',
         color: 'text.primary',
         boxShadow: 1,
+        zIndex: (theme) => theme.zIndex.drawer + 1,
       }}
     >
       <Toolbar>

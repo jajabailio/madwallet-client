@@ -11,6 +11,8 @@ export const styles = {
       boxSizing: 'border-box',
       borderRight: '1px solid',
       borderColor: 'divider',
+      top: 64,
+      height: 'calc(100% - 64px)',
     },
   } as SxProps<Theme>,
 
@@ -25,10 +27,6 @@ export const styles = {
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
-  } as SxProps<Theme>,
-
-  toolbarSpacer: {
-    minHeight: 64,
   } as SxProps<Theme>,
 
   brandSection: {
