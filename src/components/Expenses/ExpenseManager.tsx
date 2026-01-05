@@ -1,7 +1,8 @@
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { Box, Button, CircularProgress, IconButton, Typography } from '@mui/material';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useExpenses } from '../../contexts';
 import { httpService } from '../../services';
 import type { Expense } from '../../types';
 import EmptyState from '../common/EmptyState';
@@ -11,35 +12,27 @@ import ExpenseList from './ExpenseList';
 import PayExpenseModal from './PayExpenseModal';
 
 const ExpenseManager = () => {
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { expenses, setExpenses, loading, refreshExpenses } = useExpenses();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
   const [payingExpense, setPayingExpense] = useState<Expense | null>(null);
+  const isInitialMount = useRef(true);
 
-  const fetchExpenses = useCallback(async () => {
-    try {
-      const response = await httpService<Expense[]>({
-        method: 'get',
-        url: '/expenses',
-      });
-      setExpenses(response.data);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.error('Failed to fetch expenses:', error);
+  // Fetch expenses on component mount
+  useEffect(() => {
+    refreshExpenses();
+  }, [refreshExpenses]);
+
+  // Auto-generate recurring bill expenses when month changes (NOT on initial mount)
+  useEffect(() => {
+    // Skip on initial mount
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
     }
-  }, []);
 
-  // Fetch expenses on mount
-  useEffect(() => {
-    fetchExpenses();
-  }, [fetchExpenses]);
-
-  // Auto-generate recurring bill expenses when month changes
-  useEffect(() => {
     const year = selectedMonth.getFullYear();
     const month = selectedMonth.getMonth() + 1; // getMonth() is 0-indexed
 
@@ -51,13 +44,13 @@ const ExpenseManager = () => {
     })
       .then(() => {
         // Refetch expenses after generation
-        return fetchExpenses();
+        return refreshExpenses(true);
       })
       .catch((error) => {
         // Silently fail - it's ok if there are no recurring bills or generation fails
         console.log('No recurring bills to generate for this month:', error);
       });
-  }, [selectedMonth, fetchExpenses]);
+  }, [selectedMonth, refreshExpenses]);
 
   const handleOpenModal = () => {
     setEditingExpense(null);
@@ -81,7 +74,7 @@ const ExpenseManager = () => {
 
     // Optimistic update - remove from UI immediately
     const previousExpenses = [...expenses];
-    setExpenses(expenses.filter((expense) => expense.id !== id));
+    setExpenses((prev) => (prev ? prev.filter((expense) => expense.id !== id) : null));
 
     try {
       await httpService({
@@ -111,7 +104,7 @@ const ExpenseManager = () => {
   };
 
   const handlePaymentSuccess = async () => {
-    await fetchExpenses();
+    await refreshExpenses(true);
     setPayingExpense(null);
   };
 

@@ -11,7 +11,7 @@ interface ExpenseFormModalProps {
   open: boolean;
   onClose: () => void;
   expenses: Expense[];
-  setExpenses: (expenses: Expense[] | ((prev: Expense[]) => Expense[])) => void;
+  setExpenses: React.Dispatch<React.SetStateAction<Expense[] | null>>;
   editingExpense?: Expense | null;
 }
 
@@ -80,7 +80,9 @@ const ExpenseFormModal = ({
         updatedAt: new Date(),
       };
 
-      setExpenses(expenses.map((exp) => (exp.id === editingExpense.id ? updatedExpense : exp)));
+      setExpenses((prev) =>
+        prev ? prev.map((exp) => (exp.id === editingExpense.id ? updatedExpense : exp)) : null,
+      );
       onClose();
 
       try {
@@ -99,7 +101,9 @@ const ExpenseFormModal = ({
         });
 
         setExpenses((prev) =>
-          prev.map((expense) => (expense.id === editingExpense.id ? response.data : expense)),
+          prev
+            ? prev.map((expense) => (expense.id === editingExpense.id ? response.data : expense))
+            : null,
         );
 
         await refreshSummary();
@@ -128,7 +132,7 @@ const ExpenseFormModal = ({
 
       const previousExpenses = [...expenses];
 
-      setExpenses([optimisticExpense, ...expenses]);
+      setExpenses((prev) => (prev ? [optimisticExpense, ...prev] : [optimisticExpense]));
       onClose();
 
       try {
@@ -147,7 +151,9 @@ const ExpenseFormModal = ({
         });
 
         setExpenses((prev) =>
-          prev.map((expense) => (expense.id === optimisticExpense.id ? response.data : expense)),
+          prev
+            ? prev.map((expense) => (expense.id === optimisticExpense.id ? response.data : expense))
+            : null,
         );
 
         await refreshSummary();

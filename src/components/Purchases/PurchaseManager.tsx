@@ -1,5 +1,5 @@
 import { Box, Button, CircularProgress } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { usePurchases } from '../../contexts';
 import { httpService } from '../../services';
@@ -13,6 +13,11 @@ const PurchaseManager = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingPurchase, setEditingPurchase] = useState<Purchase | null>(null);
   const [selectedPurchase, setSelectedPurchase] = useState<Purchase | null>(null);
+
+  // Fetch purchases on component mount
+  useEffect(() => {
+    refreshPurchases();
+  }, [refreshPurchases]);
 
   const handleOpenModal = () => {
     setEditingPurchase(null);

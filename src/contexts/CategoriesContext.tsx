@@ -30,9 +30,12 @@ export const CategoriesProvider = ({ children }: { children: React.ReactNode }) 
     fetch();
   }, [fetch]);
 
-  const refreshCategories = async (forceRefresh = true) => {
-    await fetch(forceRefresh);
-  };
+  const refreshCategories = useCallback(
+    async (forceRefresh = true) => {
+      await fetch(forceRefresh);
+    },
+    [fetch],
+  );
 
   return (
     <CategoriesContext.Provider

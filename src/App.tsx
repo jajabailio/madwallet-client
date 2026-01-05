@@ -18,6 +18,7 @@ import {
   AuthProvider,
   CategoriesProvider,
   DashboardProvider,
+  ExpensesProvider,
   PaymentMethodsProvider,
   PurchasesProvider,
   StatusesProvider,
@@ -86,49 +87,51 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <CategoriesProvider>
-                    <PaymentMethodsProvider>
-                      <PurchasesProvider>
-                        <StatusesProvider>
-                          <WalletProvider>
-                            <WalletTransactionProvider>
-                              <DashboardProvider>
-                                <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-                                  <AppHeader />
+                    <ExpensesProvider>
+                      <PaymentMethodsProvider>
+                        <PurchasesProvider>
+                          <StatusesProvider>
+                            <WalletProvider>
+                              <WalletTransactionProvider>
+                                <DashboardProvider>
+                                  <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+                                    <AppHeader />
 
-                                  <Container maxWidth="lg" sx={{ mb: 3 }}>
-                                    <SummaryBar />
-                                  </Container>
+                                    <Container maxWidth="lg" sx={{ mb: 3 }}>
+                                      <SummaryBar />
+                                    </Container>
 
-                                  <Container maxWidth="lg" sx={{ py: 2 }}>
-                                    <Navigation />
+                                    <Container maxWidth="lg" sx={{ py: 2 }}>
+                                      <Navigation />
 
-                                    <Routes>
-                                      <Route path="/expenses" element={<ExpenseManager />} />
-                                      <Route path="/categories" element={<CategoryManager />} />
-                                      <Route
-                                        path="/payment-methods"
-                                        element={<PaymentMethodManager />}
-                                      />
-                                      <Route path="/purchases" element={<PurchaseManager />} />
-                                      <Route
-                                        path="/recurring-bills"
-                                        element={<RecurringBillManager />}
-                                      />
-                                      <Route path="/statuses" element={<StatusManager />} />
-                                      <Route path="/wallets" element={<WalletManager />} />
-                                      <Route
-                                        path="/"
-                                        element={<Navigate to="/expenses" replace />}
-                                      />
-                                    </Routes>
-                                  </Container>
-                                </Box>
-                              </DashboardProvider>
-                            </WalletTransactionProvider>
-                          </WalletProvider>
-                        </StatusesProvider>
-                      </PurchasesProvider>
-                    </PaymentMethodsProvider>
+                                      <Routes>
+                                        <Route path="/expenses" element={<ExpenseManager />} />
+                                        <Route path="/categories" element={<CategoryManager />} />
+                                        <Route
+                                          path="/payment-methods"
+                                          element={<PaymentMethodManager />}
+                                        />
+                                        <Route path="/purchases" element={<PurchaseManager />} />
+                                        <Route
+                                          path="/recurring-bills"
+                                          element={<RecurringBillManager />}
+                                        />
+                                        <Route path="/statuses" element={<StatusManager />} />
+                                        <Route path="/wallets" element={<WalletManager />} />
+                                        <Route
+                                          path="/"
+                                          element={<Navigate to="/expenses" replace />}
+                                        />
+                                      </Routes>
+                                    </Container>
+                                  </Box>
+                                </DashboardProvider>
+                              </WalletTransactionProvider>
+                            </WalletProvider>
+                          </StatusesProvider>
+                        </PurchasesProvider>
+                      </PaymentMethodsProvider>
+                    </ExpensesProvider>
                   </CategoriesProvider>
                 </ProtectedRoute>
               }

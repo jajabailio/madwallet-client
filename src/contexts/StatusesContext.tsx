@@ -29,9 +29,12 @@ export const StatusesProvider = ({ children }: { children: React.ReactNode }) =>
     fetch();
   }, [fetch]);
 
-  const refreshStatuses = async (forceRefresh = true) => {
-    await fetch(forceRefresh);
-  };
+  const refreshStatuses = useCallback(
+    async (forceRefresh = true) => {
+      await fetch(forceRefresh);
+    },
+    [fetch],
+  );
 
   return (
     <StatusesContext.Provider

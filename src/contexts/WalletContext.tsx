@@ -30,9 +30,12 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
     fetch();
   }, [fetch]);
 
-  const refreshWallets = async (forceRefresh = true) => {
-    await fetch(forceRefresh);
-  };
+  const refreshWallets = useCallback(
+    async (forceRefresh = true) => {
+      await fetch(forceRefresh);
+    },
+    [fetch],
+  );
 
   return (
     <WalletContext.Provider

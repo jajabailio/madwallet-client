@@ -29,9 +29,12 @@ export const DashboardProvider = ({ children }: { children: React.ReactNode }) =
     fetch();
   }, [fetch]);
 
-  const refreshSummary = async (forceRefresh = true) => {
-    await fetch(forceRefresh);
-  };
+  const refreshSummary = useCallback(
+    async (forceRefresh = true) => {
+      await fetch(forceRefresh);
+    },
+    [fetch],
+  );
 
   return (
     <DashboardContext.Provider

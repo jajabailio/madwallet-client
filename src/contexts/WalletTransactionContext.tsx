@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect } from 'react';
+import { createContext, useCallback, useContext } from 'react';
 import { useCachedFetch } from '../hooks';
 import { httpService } from '../services';
 import type { WalletTransaction } from '../types';
@@ -26,13 +26,12 @@ export const WalletTransactionProvider = ({ children }: { children: React.ReactN
     cacheTimeMinutes: 10,
   });
 
-  useEffect(() => {
-    fetch();
-  }, [fetch]);
-
-  const refreshTransactions = async (forceRefresh = true) => {
-    await fetch(forceRefresh);
-  };
+  const refreshTransactions = useCallback(
+    async (forceRefresh = true) => {
+      await fetch(forceRefresh);
+    },
+    [fetch],
+  );
 
   return (
     <WalletTransactionContext.Provider

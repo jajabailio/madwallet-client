@@ -50,9 +50,14 @@ const TransactionFormModal = ({ open, onClose }: TransactionFormModalProps) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const { wallets, setWallets } = useWallets();
-  const { transactions, setTransactions } = useWalletTransactions();
+  const { transactions, setTransactions, refreshTransactions } = useWalletTransactions();
   const { refreshSummary } = useDashboard();
   const [tabValue, setTabValue] = useState(0);
+
+  // Fetch transactions on component mount
+  useEffect(() => {
+    refreshTransactions();
+  }, [refreshTransactions]);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);

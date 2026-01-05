@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect } from 'react';
+import { createContext, useCallback, useContext } from 'react';
 import { useCachedFetch } from '../hooks';
 import { httpService } from '../services';
 import type { Purchase } from '../types';
@@ -25,13 +25,12 @@ export const PurchasesProvider = ({ children }: { children: React.ReactNode }) =
     cacheTimeMinutes: 10,
   });
 
-  useEffect(() => {
-    fetch();
-  }, [fetch]);
-
-  const refreshPurchases = async (forceRefresh = true) => {
-    await fetch(forceRefresh);
-  };
+  const refreshPurchases = useCallback(
+    async (forceRefresh = true) => {
+      await fetch(forceRefresh);
+    },
+    [fetch],
+  );
 
   return (
     <PurchasesContext.Provider

@@ -29,9 +29,12 @@ export const PaymentMethodsProvider = ({ children }: { children: React.ReactNode
     fetch();
   }, [fetch]);
 
-  const refreshPaymentMethods = async (forceRefresh = true) => {
-    await fetch(forceRefresh);
-  };
+  const refreshPaymentMethods = useCallback(
+    async (forceRefresh = true) => {
+      await fetch(forceRefresh);
+    },
+    [fetch],
+  );
 
   return (
     <PaymentMethodsContext.Provider

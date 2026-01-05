@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface UseCachedFetchOptions<T> {
   fetchFn: () => Promise<T>;
@@ -40,6 +40,12 @@ export const useCachedFetch = <T>({
   const [error, setError] = useState<Error | null>(null);
   const lastFetchedAtRef = useRef<Date | null>(null);
   const isFetchingRef = useRef(false);
+  const dataRef = useRef<T | null>(null);
+
+  // Keep dataRef in sync with data
+  useEffect(() => {
+    dataRef.current = data;
+  }, [data]);
 
   const isCacheStale = useCallback(() => {
     if (!lastFetchedAtRef.current) return true;
@@ -58,8 +64,8 @@ export const useCachedFetch = <T>({
         return;
       }
 
-      // Skip fetch if cache is fresh and not forcing refresh
-      if (!forceRefresh && !isCacheStale() && data !== null) {
+      // Skip fetch if cache is fresh and not forcing refresh (use ref to avoid dependency)
+      if (!forceRefresh && !isCacheStale() && dataRef.current !== null) {
         return;
       }
 
@@ -80,7 +86,7 @@ export const useCachedFetch = <T>({
         isFetchingRef.current = false;
       }
     },
-    [fetchFn, isCacheStale, data],
+    [fetchFn, isCacheStale],
   );
 
   return {
