@@ -21,17 +21,17 @@ interface PurchaseDetailsDrawerProps {
   onClose: () => void;
 }
 
+const DetailRow = ({ label, value }: { label: string; value: React.ReactNode }) => (
+  <Box sx={styles.detailRow}>
+    <Typography variant="caption" color="text.secondary" sx={styles.detailLabel}>
+      {label}
+    </Typography>
+    <Typography variant="body1">{value || '—'}</Typography>
+  </Box>
+);
+
 const PurchaseDetailsDrawer = ({ purchase, open, onClose }: PurchaseDetailsDrawerProps) => {
   if (!purchase) return null;
-
-  const DetailRow = ({ label, value }: { label: string; value: React.ReactNode }) => (
-    <Box sx={styles.detailRow}>
-      <Typography variant="caption" color="text.secondary" sx={styles.detailLabel}>
-        {label}
-      </Typography>
-      <Typography variant="body1">{value || '—'}</Typography>
-    </Box>
-  );
 
   const getStatusColor = (status: string): 'success' | 'warning' | 'error' | 'default' => {
     switch (status) {

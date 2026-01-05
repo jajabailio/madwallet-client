@@ -11,9 +11,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
-import { httpService } from '../../services';
-import type { Wallet, WalletTransaction } from '../../types';
+import type { Wallet } from '../../types';
 import { formatCurrency, formatDate } from '../../utils';
 
 interface WalletDetailsDrawerProps {
@@ -22,44 +20,17 @@ interface WalletDetailsDrawerProps {
   onClose: () => void;
 }
 
+const DetailRow = ({ label, value }: { label: string; value: React.ReactNode }) => (
+  <Box sx={{ mb: 2 }}>
+    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+      {label}
+    </Typography>
+    <Typography variant="body1">{value || '—'}</Typography>
+  </Box>
+);
+
 const WalletDetailsDrawer = ({ wallet, open, onClose }: WalletDetailsDrawerProps) => {
-  const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
-  const [loadingTransactions, setLoadingTransactions] = useState(false);
-
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      if (!wallet) return;
-
-      try {
-        setLoadingTransactions(true);
-        const response = await httpService<{ data: WalletTransaction[] }>({
-          method: 'get',
-          url: `/wallet-transactions?walletId=${wallet.id}`,
-        });
-        // Show only the last 10 transactions
-        setTransactions(response.data.data.slice(0, 10));
-      } catch (error) {
-        console.error('Failed to fetch wallet transactions:', error);
-      } finally {
-        setLoadingTransactions(false);
-      }
-    };
-
-    if (open && wallet) {
-      fetchTransactions();
-    }
-  }, [wallet, open]);
-
   if (!wallet) return null;
-
-  const DetailRow = ({ label, value }: { label: string; value: React.ReactNode }) => (
-    <Box sx={{ mb: 2 }}>
-      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-        {label}
-      </Typography>
-      <Typography variant="body1">{value || '—'}</Typography>
-    </Box>
-  );
 
   const formatWalletType = (type: string): string => {
     const typeMap: Record<string, string> = {

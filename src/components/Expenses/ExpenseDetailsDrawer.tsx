@@ -9,17 +9,17 @@ interface ExpenseDetailsDrawerProps {
   onClose: () => void;
 }
 
+const DetailRow = ({ label, value }: { label: string; value: React.ReactNode }) => (
+  <Box sx={{ mb: 2 }}>
+    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+      {label}
+    </Typography>
+    <Typography variant="body1">{value || '—'}</Typography>
+  </Box>
+);
+
 const ExpenseDetailsDrawer = ({ expense, open, onClose }: ExpenseDetailsDrawerProps) => {
   if (!expense) return null;
-
-  const DetailRow = ({ label, value }: { label: string; value: React.ReactNode }) => (
-    <Box sx={{ mb: 2 }}>
-      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-        {label}
-      </Typography>
-      <Typography variant="body1">{value || '—'}</Typography>
-    </Box>
-  );
 
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>

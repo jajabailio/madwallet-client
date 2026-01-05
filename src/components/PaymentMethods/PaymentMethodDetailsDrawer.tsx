@@ -24,6 +24,32 @@ interface PaymentMethodDetailsDrawerProps {
   onClose: () => void;
 }
 
+const SummaryCard = ({
+  label,
+  amountCents,
+  count,
+  color,
+  borderColor,
+}: {
+  label: string;
+  amountCents: number;
+  count: number;
+  color: string;
+  borderColor: string;
+}) => (
+  <Box sx={{ ...styles.summaryCard, borderColor }}>
+    <Typography sx={styles.summaryCardLabel} color="text.secondary">
+      {label}
+    </Typography>
+    <Typography sx={styles.summaryCardValue} color={color}>
+      {formatCurrency(amountCents)}
+    </Typography>
+    <Typography sx={styles.summaryCardCount} color="text.secondary">
+      {count} {count === 1 ? 'expense' : 'expenses'}
+    </Typography>
+  </Box>
+);
+
 const PaymentMethodDetailsDrawer = ({
   paymentMethod,
   open,
@@ -77,32 +103,6 @@ const PaymentMethodDetailsDrawer = ({
     if (!expense.dueDate || expense.status?.name === 'Paid') return false;
     return new Date(expense.dueDate) < new Date();
   };
-
-  const SummaryCard = ({
-    label,
-    amountCents,
-    count,
-    color,
-    borderColor,
-  }: {
-    label: string;
-    amountCents: number;
-    count: number;
-    color: string;
-    borderColor: string;
-  }) => (
-    <Box sx={{ ...styles.summaryCard, borderColor }}>
-      <Typography sx={styles.summaryCardLabel} color="text.secondary">
-        {label}
-      </Typography>
-      <Typography sx={styles.summaryCardValue} color={color}>
-        {formatCurrency(amountCents)}
-      </Typography>
-      <Typography sx={styles.summaryCardCount} color="text.secondary">
-        {count} {count === 1 ? 'expense' : 'expenses'}
-      </Typography>
-    </Box>
-  );
 
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>

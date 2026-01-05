@@ -28,6 +28,15 @@ interface RecurringBillDetailsDrawerProps {
   onRefresh: () => void;
 }
 
+const DetailRow = ({ label, value }: { label: string; value: React.ReactNode }) => (
+  <Box sx={styles.detailRow}>
+    <Typography variant="caption" color="text.secondary" sx={styles.detailLabel}>
+      {label}
+    </Typography>
+    <Typography variant="body1">{value || '—'}</Typography>
+  </Box>
+);
+
 const RecurringBillDetailsDrawer = ({
   bill,
   open,
@@ -72,15 +81,6 @@ const RecurringBillDetailsDrawer = ({
       console.error('Failed to generate expense:', error);
     }
   };
-
-  const DetailRow = ({ label, value }: { label: string; value: React.ReactNode }) => (
-    <Box sx={styles.detailRow}>
-      <Typography variant="caption" color="text.secondary" sx={styles.detailLabel}>
-        {label}
-      </Typography>
-      <Typography variant="body1">{value || '—'}</Typography>
-    </Box>
-  );
 
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
