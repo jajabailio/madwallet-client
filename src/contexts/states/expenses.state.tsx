@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext } from 'react';
-import { useCachedFetch } from '../hooks';
-import { httpService } from '../services';
-import type { Expense } from '../types';
+import { useCachedFetch } from '../../hooks';
+import { httpService } from '../../services';
+import type { Expense } from '../../types';
 
 interface ExpensesContextType {
   expenses: Expense[];

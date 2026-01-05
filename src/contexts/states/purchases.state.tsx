@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext } from 'react';
-import { useCachedFetch } from '../hooks';
-import { httpService } from '../services';
-import type { Purchase } from '../types';
+import { useCachedFetch } from '../../hooks';
+import { httpService } from '../../services';
+import type { Purchase } from '../../types';
 
 interface PurchasesContextType {
   purchases: Purchase[];

@@ -2,7 +2,7 @@ import type { PaletteMode } from '@mui/material';
 import { CssBaseline } from '@mui/material';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { getTheme } from '../theme';
+import { getTheme } from '../../theme';
 
 interface ThemeContextType {
   mode: PaletteMode;

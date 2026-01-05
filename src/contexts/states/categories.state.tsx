@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect } from 'react';
-import { useCachedFetch } from '../hooks';
-import { httpService } from '../services';
-import type { Category } from '../types';
+import { useCachedFetch } from '../../hooks';
+import { httpService } from '../../services';
+import type { Category } from '../../types';
 
 interface CategoriesContextType {
   categories: Category[];

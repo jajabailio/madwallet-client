@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect } from 'react';
-import { useCachedFetch } from '../hooks';
-import { httpService } from '../services';
-import type { Status } from '../types';
+import { useCachedFetch } from '../../hooks';
+import { httpService } from '../../services';
+import type { Status } from '../../types';
 
 interface StatusesContextType {
   statuses: Status[];

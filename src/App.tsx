@@ -26,20 +26,7 @@ import PurchaseManager from './components/Purchases/PurchaseManager';
 import RecurringBillManager from './components/RecurringBills/RecurringBillManager';
 import StatusManager from './components/Statuses/StatusManager';
 import WalletManager from './components/Wallets/WalletManager';
-import {
-  AuthProvider,
-  CategoriesProvider,
-  DashboardProvider,
-  ExpensesProvider,
-  PaymentMethodsProvider,
-  PurchasesProvider,
-  StatusesProvider,
-  ThemeProvider,
-  useTheme as useAppTheme,
-  useAuth,
-  WalletProvider,
-  WalletTransactionProvider,
-} from './contexts';
+import { CoreProvider, DataProvider, useTheme as useAppTheme, useAuth } from './contexts';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -152,43 +139,27 @@ const AuthenticatedLayout = () => {
 
 const App = () => {
   return (
-    <ThemeProvider>
+    <CoreProvider>
       <BrowserRouter>
-        <AuthProvider>
-          <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
 
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
-            <Route
-              path="/*"
-              element={
-                <ProtectedRoute>
-                  <CategoriesProvider>
-                    <ExpensesProvider>
-                      <PaymentMethodsProvider>
-                        <PurchasesProvider>
-                          <StatusesProvider>
-                            <WalletProvider>
-                              <WalletTransactionProvider>
-                                <DashboardProvider>
-                                  <AuthenticatedLayout />
-                                </DashboardProvider>
-                              </WalletTransactionProvider>
-                            </WalletProvider>
-                          </StatusesProvider>
-                        </PurchasesProvider>
-                      </PaymentMethodsProvider>
-                    </ExpensesProvider>
-                  </CategoriesProvider>
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </AuthProvider>
+          <Route
+            path="/*"
+            element={
+              <ProtectedRoute>
+                <DataProvider>
+                  <AuthenticatedLayout />
+                </DataProvider>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
       </BrowserRouter>
-    </ThemeProvider>
+    </CoreProvider>
   );
 };
 
