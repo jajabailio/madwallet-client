@@ -1,11 +1,35 @@
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import { Box, Card, CardContent, CircularProgress, Grid, Typography } from '@mui/material';
-import { useDashboard } from '../../contexts';
+import { useState } from 'react';
+import { useDashboard, useExpenses } from '../../contexts';
+import type { Expense } from '../../types';
 import { formatCurrency } from '../../utils';
+import ExpenseDetailsDrawer from '../Expenses/ExpenseDetailsDrawer';
+import PayExpenseModal from '../Expenses/PayExpenseModal';
+import PendingDebtsDrawer from './PendingDebtsDrawer';
 
 const SummaryBar = () => {
-  const { summary, loading } = useDashboard();
+  const { summary, loading, refreshSummary } = useDashboard();
+  const { refreshExpenses } = useExpenses();
+
+  const [pendingDebtsDrawerOpen, setPendingDebtsDrawerOpen] = useState(false);
+  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
+  const [payingExpense, setPayingExpense] = useState<Expense | null>(null);
+
+  const handlePayExpense = (expense: Expense) => {
+    setPayingExpense(expense);
+  };
+
+  const handleViewDetails = (expense: Expense) => {
+    setSelectedExpense(expense);
+  };
+
+  const handlePaymentSuccess = async () => {
+    await refreshExpenses(true);
+    await refreshSummary(true);
+    setPayingExpense(null);
+  };
 
   if (loading) {
     return (
@@ -55,7 +79,14 @@ const SummaryBar = () => {
               background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
               color: 'white',
               height: '100%',
+              cursor: 'pointer',
+              transition: 'transform 0.2s, box-shadow 0.2s',
+              '&:hover': {
+                transform: 'translateY(-2px)',
+                boxShadow: 6,
+              },
             }}
+            onClick={() => setPendingDebtsDrawerOpen(true)}
           >
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -74,6 +105,29 @@ const SummaryBar = () => {
           </Card>
         </Grid>
       </Grid>
+
+      {/* Pending Debts Drawer */}
+      <PendingDebtsDrawer
+        open={pendingDebtsDrawerOpen}
+        onClose={() => setPendingDebtsDrawerOpen(false)}
+        onPayExpense={handlePayExpense}
+        onViewDetails={handleViewDetails}
+      />
+
+      {/* Expense Details Drawer */}
+      <ExpenseDetailsDrawer
+        expense={selectedExpense}
+        open={!!selectedExpense}
+        onClose={() => setSelectedExpense(null)}
+      />
+
+      {/* Pay Expense Modal */}
+      <PayExpenseModal
+        open={!!payingExpense}
+        onClose={() => setPayingExpense(null)}
+        expense={payingExpense}
+        onPaymentSuccess={handlePaymentSuccess}
+      />
     </Box>
   );
 };

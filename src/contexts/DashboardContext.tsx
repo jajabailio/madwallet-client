@@ -5,6 +5,7 @@ import type { DashboardSummary } from '../types';
 
 interface DashboardContextType {
   summary: DashboardSummary | null;
+  setSummary: React.Dispatch<React.SetStateAction<DashboardSummary | null>>;
   loading: boolean;
   refreshSummary: (forceRefresh?: boolean) => Promise<void>;
 }
@@ -20,7 +21,7 @@ export const DashboardProvider = ({ children }: { children: React.ReactNode }) =
     return response.data.data;
   }, []);
 
-  const { data, loading, fetch } = useCachedFetch<DashboardSummary>({
+  const { data, loading, fetch, setData } = useCachedFetch<DashboardSummary>({
     fetchFn,
     cacheTimeMinutes: 10,
   });
@@ -40,6 +41,7 @@ export const DashboardProvider = ({ children }: { children: React.ReactNode }) =
     <DashboardContext.Provider
       value={{
         summary: data,
+        setSummary: setData,
         loading,
         refreshSummary,
       }}

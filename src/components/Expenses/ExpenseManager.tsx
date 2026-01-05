@@ -2,7 +2,7 @@ import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { Box, Button, CircularProgress, IconButton, Typography } from '@mui/material';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import { useExpenses } from '../../contexts';
+import { useDashboard, useExpenses } from '../../contexts';
 import { httpService } from '../../services';
 import type { Expense } from '../../types';
 import EmptyState from '../common/EmptyState';
@@ -13,6 +13,7 @@ import PayExpenseModal from './PayExpenseModal';
 
 const ExpenseManager = () => {
   const { expenses, setExpenses, loading, refreshExpenses } = useExpenses();
+  const { refreshSummary } = useDashboard();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
@@ -105,6 +106,7 @@ const ExpenseManager = () => {
 
   const handlePaymentSuccess = async () => {
     await refreshExpenses(true);
+    await refreshSummary(true); // Refresh dashboard to update Total Cash
     setPayingExpense(null);
   };
 

@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { useWallets } from '../../contexts';
+import { useDashboard, useWallets } from '../../contexts';
 import { httpService } from '../../services';
 import type { Expense } from '../../types';
 import { formatCurrency } from '../../utils';
@@ -29,6 +29,7 @@ interface PayExpenseModalProps {
 
 const PayExpenseModal = ({ open, onClose, expense, onPaymentSuccess }: PayExpenseModalProps) => {
   const { wallets } = useWallets();
+  const { summary, setSummary } = useDashboard();
   const [selectedWalletId, setSelectedWalletId] = useState<number | null>(null);
   const [paying, setPaying] = useState(false);
 
@@ -44,6 +45,18 @@ const PayExpenseModal = ({ open, onClose, expense, onPaymentSuccess }: PayExpens
 
     setPaying(true);
 
+    // Store old summary for rollback
+    const oldSummary = summary;
+
+    // Optimistic update: Decrease Total Cash immediately
+    if (summary) {
+      const newSummary = {
+        ...summary,
+        totalBalanceCents: summary.totalBalanceCents - expense.amountCents,
+      };
+      setSummary(newSummary);
+    }
+
     try {
       await httpService({
         method: 'post',
@@ -55,6 +68,9 @@ const PayExpenseModal = ({ open, onClose, expense, onPaymentSuccess }: PayExpens
       onPaymentSuccess();
       onClose();
     } catch (error) {
+      // Rollback to old summary on error
+      setSummary(oldSummary);
+
       if (error && typeof error === 'object' && 'response' in error) {
         const axiosError = error as { response?: { data?: { error?: string } } };
         const errorMessage = axiosError.response?.data?.error || 'Failed to pay expense';
