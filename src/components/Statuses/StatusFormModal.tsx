@@ -18,11 +18,7 @@ const statusSchema = Joi.object({
   description: Joi.string().allow('').max(500).optional(),
 });
 
-const StatusFormModal = ({
-  open,
-  onClose,
-  editingStatus,
-}: StatusFormModalProps) => {
+const StatusFormModal = ({ open, onClose, editingStatus }: StatusFormModalProps) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const { refreshStatuses } = useStatuses();

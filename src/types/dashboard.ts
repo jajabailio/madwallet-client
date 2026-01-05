@@ -1,5 +1,5 @@
 export interface DashboardSummary {
-	totalBalanceCents: number;
-	totalUnpaidCents: number;
-	unpaidCount: number;
+  totalBalanceCents: number;
+  totalUnpaidCents: number;
+  unpaidCount: number;
 }

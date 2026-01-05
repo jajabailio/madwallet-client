@@ -5,5 +5,5 @@ export { PaymentMethodsProvider, usePaymentMethods } from './PaymentMethodsConte
 export { PurchasesProvider, usePurchases } from './PurchasesContext';
 export { StatusesProvider, useStatuses } from './StatusesContext';
 export { ThemeProvider, useTheme } from './ThemeContext';
-export { WalletProvider, useWallets } from './WalletContext';
-export { WalletTransactionProvider, useWalletTransactions } from './WalletTransactionContext';
+export { useWallets, WalletProvider } from './WalletContext';
+export { useWalletTransactions, WalletTransactionProvider } from './WalletTransactionContext';

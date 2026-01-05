@@ -1,7 +1,7 @@
-import { Box, Chip, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import { Box, Chip, IconButton } from '@mui/material';
 import type { PaymentMethod, TTableContent } from '../../types';
 import type { TTableData } from '../../types/table';
 import { formatDate } from '../../utils';
@@ -64,7 +64,10 @@ const PaymentMethodList = ({
   };
 
   const getTypeColor = (type: string) => {
-    const colors: Record<string, 'default' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning'> = {
+    const colors: Record<
+      string,
+      'default' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning'
+    > = {
       cash: 'success',
       'e-wallet': 'info',
       'credit-card': 'warning',

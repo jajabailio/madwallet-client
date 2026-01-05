@@ -1,6 +1,6 @@
-import { Box, Chip, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import type { WalletTransaction, TTableContent } from '../../types';
+import { Box, Chip, IconButton } from '@mui/material';
+import type { TTableContent, WalletTransaction } from '../../types';
 import type { TTableData } from '../../types/table';
 import { formatCurrency, formatDate } from '../../utils';
 import DataTable from '../common/DataTable';

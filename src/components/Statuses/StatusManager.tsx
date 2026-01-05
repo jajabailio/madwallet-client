@@ -67,11 +67,7 @@ const StatusManager = () => {
 
       <StatusList statuses={statuses} onEdit={handleEdit} onDelete={handleDelete} />
 
-      <StatusFormModal
-        open={modalOpen}
-        onClose={handleCloseModal}
-        editingStatus={editingStatus}
-      />
+      <StatusFormModal open={modalOpen} onClose={handleCloseModal} editingStatus={editingStatus} />
     </Box>
   );
 };

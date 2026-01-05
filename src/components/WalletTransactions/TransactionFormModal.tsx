@@ -112,9 +112,7 @@ const TransactionFormModal = ({ open, onClose }: TransactionFormModalProps) => {
       setTransactions((prev) =>
         prev.map((t) => (t.id === optimisticTransaction.id ? response.data.data.transaction : t)),
       );
-      setWallets((prev) =>
-        prev.map((w) => (w.id === walletId ? response.data.data.wallet : w)),
-      );
+      setWallets((prev) => prev.map((w) => (w.id === walletId ? response.data.data.wallet : w)));
 
       await refreshSummary();
       toast.success('Income transaction added successfully!');
@@ -276,7 +274,11 @@ const TransactionFormModal = ({ open, onClose }: TransactionFormModalProps) => {
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth fullScreen={fullScreen}>
       <DialogTitle>Add Transaction</DialogTitle>
       <DialogContent>
-        <Tabs value={tabValue} onChange={handleTabChange} sx={{ mb: 2, borderBottom: 1, borderColor: 'divider' }}>
+        <Tabs
+          value={tabValue}
+          onChange={handleTabChange}
+          sx={{ mb: 2, borderBottom: 1, borderColor: 'divider' }}
+        >
           <Tab label="Income" />
           <Tab label="Transfer" />
         </Tabs>

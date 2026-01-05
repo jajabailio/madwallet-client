@@ -24,11 +24,7 @@ const categorySchema = Joi.object({
     .label('color'),
 });
 
-const CategoryFormModal = ({
-  open,
-  onClose,
-  editingCategory,
-}: CategoryFormModalProps) => {
+const CategoryFormModal = ({ open, onClose, editingCategory }: CategoryFormModalProps) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const { refreshCategories } = useCategories();
@@ -140,7 +136,7 @@ const CategoryFormModal = ({
               {renderButton({
                 text: isEditing ? 'Update Category' : 'Add Category',
                 variant: 'contained',
-                fullWidth: true
+                fullWidth: true,
               })}
             </Grid>
           </Grid>

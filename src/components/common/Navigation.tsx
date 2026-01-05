@@ -1,7 +1,19 @@
-import { Tab, Tabs, Box, Drawer, List, ListItem, ListItemButton, ListItemText, Divider, IconButton, Typography } from '@mui/material';
 import { Menu as MenuIcon } from '@mui/icons-material';
-import { Link, useLocation } from 'react-router-dom';
+import {
+  Box,
+  Divider,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Tab,
+  Tabs,
+  Typography,
+} from '@mui/material';
 import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 const Navigation = () => {
   const location = useLocation();
@@ -44,7 +56,13 @@ const Navigation = () => {
           sx={{ display: { xs: 'none', md: 'flex' } }}
         >
           {navItems.map((item) => (
-            <Tab key={item.path} label={item.label} value={item.path} component={Link} to={item.path} />
+            <Tab
+              key={item.path}
+              label={item.label}
+              value={item.path}
+              component={Link}
+              to={item.path}
+            />
           ))}
         </Tabs>
       </Box>

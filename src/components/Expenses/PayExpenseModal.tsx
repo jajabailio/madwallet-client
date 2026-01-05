@@ -1,24 +1,24 @@
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  FormControl,
-  FormLabel,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Typography,
-  Box,
   Alert,
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
+  Typography,
 } from '@mui/material';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useWallets } from '../../contexts';
 import { httpService } from '../../services';
-import { formatCurrency } from '../../utils';
 import type { Expense } from '../../types';
+import { formatCurrency } from '../../utils';
 
 interface PayExpenseModalProps {
   open: boolean;
@@ -76,8 +76,7 @@ const PayExpenseModal = ({ open, onClose, expense, onPaymentSuccess }: PayExpens
   };
 
   const selectedWallet = activeWallets.find((w) => w.id === selectedWalletId);
-  const hasSufficientBalance =
-    selectedWallet && selectedWallet.balanceCents >= expense.amountCents;
+  const hasSufficientBalance = selectedWallet && selectedWallet.balanceCents >= expense.amountCents;
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
@@ -94,9 +93,7 @@ const PayExpenseModal = ({ open, onClose, expense, onPaymentSuccess }: PayExpens
         </Box>
 
         {activeWallets.length === 0 ? (
-          <Alert severity="warning">
-            No active wallets found. Please create a wallet first.
-          </Alert>
+          <Alert severity="warning">No active wallets found. Please create a wallet first.</Alert>
         ) : (
           <>
             <FormControl component="fieldset" fullWidth>
@@ -113,7 +110,14 @@ const PayExpenseModal = ({ open, onClose, expense, onPaymentSuccess }: PayExpens
                       value={wallet.id}
                       control={<Radio />}
                       label={
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', pr: 2 }}>
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            width: '100%',
+                            pr: 2,
+                          }}
+                        >
                           <Box>
                             <Typography variant="body1">{wallet.name}</Typography>
                             <Typography variant="caption" color="text.secondary">
@@ -158,7 +162,9 @@ const PayExpenseModal = ({ open, onClose, expense, onPaymentSuccess }: PayExpens
         <Button
           onClick={handlePay}
           variant="contained"
-          disabled={!selectedWalletId || !hasSufficientBalance || paying || activeWallets.length === 0}
+          disabled={
+            !selectedWalletId || !hasSufficientBalance || paying || activeWallets.length === 0
+          }
         >
           {paying ? 'Processing...' : 'Pay Now'}
         </Button>

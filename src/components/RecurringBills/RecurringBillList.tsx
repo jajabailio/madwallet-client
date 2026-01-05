@@ -1,6 +1,6 @@
-import { Box, Chip, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { Box, Chip, IconButton } from '@mui/material';
 import { useCategories } from '../../contexts';
 import type { RecurringBill, TTableContent } from '../../types';
 import type { TTableData } from '../../types/table';

@@ -57,8 +57,7 @@ const ColorPicker = ({ value, onChange, error, label, required }: ColorPickerPro
                   bottom: 0,
                   backgroundColor: color.value,
                   borderRadius: 1,
-                  border:
-                    value === color.value ? '3px solid #1976d2' : '2px solid rgba(0,0,0,0.1)',
+                  border: value === color.value ? '3px solid #1976d2' : '2px solid rgba(0,0,0,0.1)',
                   boxShadow:
                     value === color.value
                       ? '0 0 0 3px rgba(25, 118, 210, 0.2)'

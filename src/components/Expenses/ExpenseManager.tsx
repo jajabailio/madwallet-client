@@ -1,5 +1,5 @@
-import { Box, Button, CircularProgress, IconButton, Typography } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
+import { Box, Button, CircularProgress, IconButton, Typography } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { httpService } from '../../services';

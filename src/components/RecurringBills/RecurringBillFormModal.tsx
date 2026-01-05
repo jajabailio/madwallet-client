@@ -100,7 +100,9 @@ const RecurringBillFormModal = ({
           `Failed to ${isEditing ? 'update' : 'create'} recurring bill. Please try again.`;
         toast.error(errorMessage);
       } else {
-        toast.error(`Failed to ${isEditing ? 'update' : 'create'} recurring bill. Please try again.`);
+        toast.error(
+          `Failed to ${isEditing ? 'update' : 'create'} recurring bill. Please try again.`,
+        );
       }
       console.error(`Failed to ${isEditing ? 'update' : 'create'} recurring bill:`, error);
     }

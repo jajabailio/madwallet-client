@@ -1,3 +1,4 @@
+import CloseIcon from '@mui/icons-material/Close';
 import {
   Box,
   Chip,
@@ -10,11 +11,10 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
 import { useEffect, useState } from 'react';
-import { formatCurrency, formatDate } from '../../utils';
-import type { Wallet, WalletTransaction } from '../../types';
 import { httpService } from '../../services';
+import type { Wallet, WalletTransaction } from '../../types';
+import { formatCurrency, formatDate } from '../../utils';
 
 interface WalletDetailsDrawerProps {
   wallet: Wallet | null;
@@ -71,9 +71,7 @@ const WalletDetailsDrawer = ({ wallet, open, onClose }: WalletDetailsDrawerProps
     return typeMap[type] || type;
   };
 
-  const getTransactionTypeColor = (
-    type: string,
-  ): 'success' | 'error' | 'warning' | 'default' => {
+  const getTransactionTypeColor = (type: string): 'success' | 'error' | 'warning' | 'default' => {
     switch (type) {
       case 'income':
       case 'transfer_in':

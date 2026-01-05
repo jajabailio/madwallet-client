@@ -1,7 +1,7 @@
-import { Box, Chip, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import type { Wallet, TTableContent } from '../../types';
+import { Box, Chip, IconButton } from '@mui/material';
+import type { TTableContent, Wallet } from '../../types';
 import type { TTableData } from '../../types/table';
 import { formatCurrency } from '../../utils';
 import DataTable from '../common/DataTable';
@@ -69,9 +69,7 @@ const WalletList = ({ wallets, onEdit, onDelete, onViewDetails }: WalletListProp
       },
       {
         key: 'type',
-        content: (
-          <Chip label={formatWalletType(wallet.type)} size="small" variant="outlined" />
-        ),
+        content: <Chip label={formatWalletType(wallet.type)} size="small" variant="outlined" />,
       },
       {
         key: 'balance',

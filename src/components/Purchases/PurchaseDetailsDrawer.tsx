@@ -1,3 +1,4 @@
+import CloseIcon from '@mui/icons-material/Close';
 import {
   Box,
   Chip,
@@ -10,9 +11,8 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import { formatCurrency, formatDate } from '../../utils';
 import type { Purchase } from '../../types';
+import { formatCurrency, formatDate } from '../../utils';
 import { styles } from './PurchaseDetailsDrawer.styles';
 
 interface PurchaseDetailsDrawerProps {
@@ -65,58 +65,77 @@ const PurchaseDetailsDrawer = ({ purchase, open, onClose }: PurchaseDetailsDrawe
         <Stack spacing={2}>
           <DetailRow label="Description" value={purchase.description} />
 
-          <DetailRow label="Total Amount" value={
-            <Typography variant="h6" color="primary" sx={styles.totalAmount}>
-              {formatCurrency(purchase.totalAmountCents)}
-            </Typography>
-          } />
+          <DetailRow
+            label="Total Amount"
+            value={
+              <Typography variant="h6" color="primary" sx={styles.totalAmount}>
+                {formatCurrency(purchase.totalAmountCents)}
+              </Typography>
+            }
+          />
 
           <Box sx={styles.gridTwoColumns}>
             <DetailRow label="Installment Count" value={purchase.installmentCount} />
-            <DetailRow label="Frequency" value={
-              <Chip label={purchase.frequency} size="small" variant="outlined" />
-            } />
+            <DetailRow
+              label="Frequency"
+              value={<Chip label={purchase.frequency} size="small" variant="outlined" />}
+            />
           </Box>
 
-          <DetailRow label="Status" value={
-            <Chip
-              label={purchase.status}
-              size="small"
-              color={getStatusColor(purchase.status)}
-            />
-          } />
+          <DetailRow
+            label="Status"
+            value={
+              <Chip label={purchase.status} size="small" color={getStatusColor(purchase.status)} />
+            }
+          />
 
           <Divider sx={styles.dividerSpacing} />
 
-          <DetailRow label="Category" value={
-            purchase.category ? (
-              <Chip
-                label={purchase.category.name}
-                size="small"
-                sx={{ ...styles.categoryChip, bgcolor: purchase.category.color }}
-              />
-            ) : '—'
-          } />
+          <DetailRow
+            label="Category"
+            value={
+              purchase.category ? (
+                <Chip
+                  label={purchase.category.name}
+                  size="small"
+                  sx={{ ...styles.categoryChip, bgcolor: purchase.category.color }}
+                />
+              ) : (
+                '—'
+              )
+            }
+          />
 
-          <DetailRow label="Default Status for Installments" value={
-            purchase.defaultStatus ? (
-              <Chip label={purchase.defaultStatus.name} size="small" color="default" />
-            ) : '—'
-          } />
+          <DetailRow
+            label="Default Status for Installments"
+            value={
+              purchase.defaultStatus ? (
+                <Chip label={purchase.defaultStatus.name} size="small" color="default" />
+              ) : (
+                '—'
+              )
+            }
+          />
 
-          <DetailRow label="Payment Method" value={
-            purchase.paymentMethod ? (
-              <Chip label={purchase.paymentMethod.name} size="small" variant="outlined" />
-            ) : '—'
-          } />
+          <DetailRow
+            label="Payment Method"
+            value={
+              purchase.paymentMethod ? (
+                <Chip label={purchase.paymentMethod.name} size="small" variant="outlined" />
+              ) : (
+                '—'
+              )
+            }
+          />
 
           <Divider sx={styles.dividerSpacing} />
 
           <Box sx={styles.gridTwoColumns}>
             <DetailRow label="Start Date" value={formatDate(purchase.startDate)} />
-            <DetailRow label="End Date" value={
-              purchase.endDate ? formatDate(purchase.endDate) : '—'
-            } />
+            <DetailRow
+              label="End Date"
+              value={purchase.endDate ? formatDate(purchase.endDate) : '—'}
+            />
           </Box>
 
           {/* Installments/Expenses List */}

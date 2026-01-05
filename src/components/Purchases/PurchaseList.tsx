@@ -1,6 +1,6 @@
-import { Box, Chip, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { Box, Chip, IconButton } from '@mui/material';
 import { useCategories, useStatuses } from '../../contexts';
 import type { Purchase, TTableContent } from '../../types';
 import type { TTableData } from '../../types/table';
@@ -86,76 +86,76 @@ const PurchaseList = ({ purchases, onEdit, onDelete, onViewDetails }: PurchaseLi
           key: 'totalAmount',
           content: formatCurrency(Number(purchase.totalAmountCents)),
         },
-      {
-        key: 'installments',
-        content: (
-          <Box sx={{ color: 'text.secondary' }}>
-            {purchase.installmentCount} {purchase.installmentCount === 1 ? 'payment' : 'payments'}
-          </Box>
-        ),
-      },
-      {
-        key: 'frequency',
-        content: (
-          <Chip
-            label={purchase.frequency.charAt(0).toUpperCase() + purchase.frequency.slice(1)}
-            size="small"
-            variant="outlined"
-          />
-        ),
-      },
-      {
-        key: 'startDate',
-        content: formatDate(purchase.startDate),
-      },
-      {
-        key: 'status',
-        content: (
-          <Chip
-            label={purchase.status.charAt(0).toUpperCase() + purchase.status.slice(1)}
-            color={
-              purchase.status === 'active'
-                ? 'success'
-                : purchase.status === 'completed'
-                  ? 'info'
-                  : 'default'
-            }
-            size="small"
-            variant="outlined"
-          />
-        ),
-      },
-      {
-        key: 'actions',
-        content: (
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <IconButton
+        {
+          key: 'installments',
+          content: (
+            <Box sx={{ color: 'text.secondary' }}>
+              {purchase.installmentCount} {purchase.installmentCount === 1 ? 'payment' : 'payments'}
+            </Box>
+          ),
+        },
+        {
+          key: 'frequency',
+          content: (
+            <Chip
+              label={purchase.frequency.charAt(0).toUpperCase() + purchase.frequency.slice(1)}
               size="small"
-              color="primary"
-              onClick={(e) => {
-                e.stopPropagation();
-                onEdit(purchase);
-              }}
-              aria-label="edit"
-            >
-              <EditIcon fontSize="small" />
-            </IconButton>
-            <IconButton
+              variant="outlined"
+            />
+          ),
+        },
+        {
+          key: 'startDate',
+          content: formatDate(purchase.startDate),
+        },
+        {
+          key: 'status',
+          content: (
+            <Chip
+              label={purchase.status.charAt(0).toUpperCase() + purchase.status.slice(1)}
+              color={
+                purchase.status === 'active'
+                  ? 'success'
+                  : purchase.status === 'completed'
+                    ? 'info'
+                    : 'default'
+              }
               size="small"
-              color="error"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete(purchase.id);
-              }}
-              aria-label="delete"
-            >
-              <DeleteIcon fontSize="small" />
-            </IconButton>
-          </Box>
-        ),
-      },
-    ],
-  };
+              variant="outlined"
+            />
+          ),
+        },
+        {
+          key: 'actions',
+          content: (
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <IconButton
+                size="small"
+                color="primary"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(purchase);
+                }}
+                aria-label="edit"
+              >
+                <EditIcon fontSize="small" />
+              </IconButton>
+              <IconButton
+                size="small"
+                color="error"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(purchase.id);
+                }}
+                aria-label="delete"
+              >
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+            </Box>
+          ),
+        },
+      ],
+    };
   });
 
   const handleRowClick = (rowKey: number | string) => {

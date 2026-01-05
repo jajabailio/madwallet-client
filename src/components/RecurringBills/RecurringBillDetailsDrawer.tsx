@@ -1,3 +1,7 @@
+import AddIcon from '@mui/icons-material/Add';
+import CloseIcon from '@mui/icons-material/Close';
+import PauseIcon from '@mui/icons-material/Pause';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import {
   Box,
   Button,
@@ -11,14 +15,10 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import PauseIcon from '@mui/icons-material/Pause';
-import AddIcon from '@mui/icons-material/Add';
 import { toast } from 'react-toastify';
 import { httpService } from '../../services';
-import { formatCurrency, formatDate } from '../../utils';
 import type { RecurringBill } from '../../types';
+import { formatCurrency, formatDate } from '../../utils';
 import { styles } from './RecurringBillDetailsDrawer.styles';
 
 interface RecurringBillDetailsDrawerProps {

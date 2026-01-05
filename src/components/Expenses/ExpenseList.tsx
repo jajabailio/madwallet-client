@@ -1,7 +1,7 @@
-import { Box, Chip, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import PaymentIcon from '@mui/icons-material/Payment';
+import { Box, Chip, IconButton } from '@mui/material';
 import type { Expense, TTableContent } from '../../types';
 import type { TTableData } from '../../types/table';
 import { formatCurrency, formatDate, getCategoryColor } from '../../utils';
@@ -16,7 +16,6 @@ interface ExpenseListProps {
 }
 
 const ExpenseList = ({ expenses, onEdit, onDelete, onViewDetails, onPay }: ExpenseListProps) => {
-
   const headers: TTableContent[] = [
     {
       key: 'description',
@@ -93,12 +92,7 @@ const ExpenseList = ({ expenses, onEdit, onDelete, onViewDetails, onPay }: Expen
             variant="outlined"
           />
         ) : (
-          <Chip
-            label="Unknown"
-            color="default"
-            size="small"
-            variant="outlined"
-          />
+          <Chip label="Unknown" color="default" size="small" variant="outlined" />
         ),
       },
       {

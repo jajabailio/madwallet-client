@@ -76,9 +76,7 @@ const StatusList = ({ statuses, onEdit, onDelete }: StatusListProps) => {
       {
         key: 'actions',
         content: status.isSystem ? (
-          <Box sx={{ color: 'text.disabled', fontSize: '0.875rem' }}>
-            Protected
-          </Box>
+          <Box sx={{ color: 'text.disabled', fontSize: '0.875rem' }}>Protected</Box>
         ) : (
           <Box sx={{ display: 'flex', gap: 1 }}>
             <IconButton

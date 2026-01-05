@@ -170,10 +170,7 @@ const PurchaseFormModal = ({ open, onClose, editingPurchase }: PurchaseFormModal
         setValue('totalAmount', editingPurchase.totalAmountCents);
         setValue('installmentCount', editingPurchase.installmentCount);
         setValue('frequency', editingPurchase.frequency);
-        setValue(
-          'startDate',
-          new Date(editingPurchase.startDate).toISOString().split('T')[0],
-        );
+        setValue('startDate', new Date(editingPurchase.startDate).toISOString().split('T')[0]);
         setValue('status', editingPurchase.status);
         setValue('categoryId', editingPurchase.categoryId);
         setValue('statusId', editingPurchase.statusId);

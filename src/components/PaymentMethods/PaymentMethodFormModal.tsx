@@ -1,4 +1,15 @@
-import { Dialog, DialogContent, DialogTitle, FormControl, FormLabel, Grid, MenuItem, Select, useMediaQuery, useTheme } from '@mui/material';
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormLabel,
+  Grid,
+  MenuItem,
+  Select,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 import Joi from 'joi';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -154,9 +165,7 @@ const PaymentMethodFormModal = ({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth fullScreen={fullScreen}>
-      <DialogTitle>
-        {isEditing ? 'Edit Payment Method' : 'Add New Payment Method'}
-      </DialogTitle>
+      <DialogTitle>{isEditing ? 'Edit Payment Method' : 'Add New Payment Method'}</DialogTitle>
       <DialogContent>
         <form onSubmit={formHandleSubmit}>
           <Grid container spacing={2} sx={{ mt: 1 }}>

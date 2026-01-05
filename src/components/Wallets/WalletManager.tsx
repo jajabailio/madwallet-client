@@ -101,11 +101,7 @@ const WalletManager = () => {
         />
       )}
 
-      <WalletFormModal
-        open={modalOpen}
-        onClose={handleCloseModal}
-        editingWallet={editingWallet}
-      />
+      <WalletFormModal open={modalOpen} onClose={handleCloseModal} editingWallet={editingWallet} />
 
       <WalletDetailsDrawer
         wallet={selectedWallet}
