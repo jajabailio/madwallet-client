@@ -28,6 +28,7 @@ import {
   WalletProvider,
   WalletTransactionProvider,
 } from './contexts';
+import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 
@@ -105,6 +106,7 @@ const App = () => {
                                       <Navigation />
 
                                       <Routes>
+                                        <Route path="/dashboard" element={<Dashboard />} />
                                         <Route path="/expenses" element={<ExpenseManager />} />
                                         <Route path="/categories" element={<CategoryManager />} />
                                         <Route
@@ -120,7 +122,7 @@ const App = () => {
                                         <Route path="/wallets" element={<WalletManager />} />
                                         <Route
                                           path="/"
-                                          element={<Navigate to="/expenses" replace />}
+                                          element={<Navigate to="/dashboard" replace />}
                                         />
                                       </Routes>
                                     </Container>

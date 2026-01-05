@@ -1,6 +1,7 @@
 export type { AuthResponse, LoginCredentials, SignupData, User } from './auth';
 export type { Category } from './category';
 export type { DashboardSummary } from './dashboard';
+export type { CategoryTotal } from './dashboard-widgets';
 export type { Expense } from './expense';
 export type {
   PaymentMethod,

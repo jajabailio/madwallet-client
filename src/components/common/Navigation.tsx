@@ -21,6 +21,7 @@ const Navigation = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
+    { label: 'Dashboard', path: '/dashboard' },
     { label: 'Expenses', path: '/expenses' },
     { label: 'Categories', path: '/categories' },
     { label: 'Payment Methods', path: '/payment-methods' },
