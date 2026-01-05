@@ -26,7 +26,7 @@ const walletSchema = Joi.object({
 const WalletFormModal = ({ open, onClose, editingWallet }: WalletFormModalProps) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
-  const { wallets, setWallets, refreshWallets } = useWallets();
+  const { wallets, setWallets } = useWallets();
   const { refreshSummary } = useDashboard();
   const isEditing = !!editingWallet;
 
@@ -224,15 +224,12 @@ const WalletFormModal = ({ open, onClose, editingWallet }: WalletFormModalProps)
                 </Grid>
               </>
             )}
-            {isEditing && (
-              <>
-                {renderCheckbox({
-                  name: 'isActive',
-                  label: 'Active',
-                  defaultValue: true,
-                })}
-              </>
-            )}
+            {isEditing &&
+              renderCheckbox({
+                name: 'isActive',
+                label: 'Active',
+                defaultValue: true,
+              })}
             <Grid size={12}>
               {renderButton({
                 text: isEditing ? 'Update Wallet' : 'Add Wallet',

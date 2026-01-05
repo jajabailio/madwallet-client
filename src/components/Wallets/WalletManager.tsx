@@ -9,7 +9,7 @@ import WalletFormModal from './WalletFormModal';
 import WalletList from './WalletList';
 
 const WalletManager = () => {
-  const { wallets, setWallets, loading, refreshWallets } = useWallets();
+  const { wallets, setWallets, loading } = useWallets();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingWallet, setEditingWallet] = useState<Wallet | null>(null);
   const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);

@@ -16,7 +16,6 @@ interface PurchaseListProps {
 
 const PurchaseList = ({ purchases, onEdit, onDelete, onViewDetails }: PurchaseListProps) => {
   const { categories } = useCategories();
-  const { statuses } = useStatuses();
   const headers: TTableContent[] = [
     {
       key: 'description',

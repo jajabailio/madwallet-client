@@ -116,7 +116,6 @@ const PaymentMethodFormModal = ({
     handleSubmit: formHandleSubmit,
     setValue,
     reset,
-    data,
   } = FormBuilder({
     schema: paymentMethodSchema,
     onSubmit: handleSubmit,
