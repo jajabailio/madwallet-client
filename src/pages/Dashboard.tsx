@@ -6,7 +6,6 @@ import {
   CategoryBreakdown,
   OverdueAlert,
   RecentTransactions,
-  TotalBalanceCard,
   UpcomingPayments,
 } from '../components/Dashboard/widgets';
 import ExpenseDetailsDrawer from '../components/Expenses/ExpenseDetailsDrawer';
@@ -16,7 +15,7 @@ import type { Expense } from '../types';
 import { calculateCategoryTotals, filterUpcomingExpenses, groupExpensesByUrgency } from '../utils';
 
 const Dashboard = () => {
-  const { summary, loading: dashboardLoading, refreshSummary } = useDashboard();
+  const { loading: dashboardLoading, refreshSummary } = useDashboard();
   const { expenses, loading: expensesLoading, refreshExpenses } = useExpenses();
   const {
     transactions,
@@ -90,11 +89,8 @@ const Dashboard = () => {
       </Typography>
 
       <Grid container spacing={3}>
-        {/* Row 1: Summary Cards */}
-        <Grid size={{ xs: 12, md: 6 }}>
-          <TotalBalanceCard balanceCents={summary?.totalBalanceCents || 0} />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
+        {/* Row 1: Overdue Alert */}
+        <Grid size={12}>
           <OverdueAlert
             overdueExpenses={urgencyGroups.overdue}
             overdueTotal={urgencyGroups.overdueTotal}
