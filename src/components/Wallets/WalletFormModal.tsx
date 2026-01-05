@@ -61,7 +61,9 @@ const WalletFormModal = ({ open, onClose, editingWallet }: WalletFormModalProps)
         });
 
         setWallets((prev) =>
-          prev.map((wallet) => (wallet.id === editingWallet.id ? response.data.data : wallet)),
+          prev
+            ? prev.map((wallet) => (wallet.id === editingWallet.id ? response.data.data : wallet))
+            : null,
         );
 
         await refreshSummary();
@@ -118,7 +120,11 @@ const WalletFormModal = ({ open, onClose, editingWallet }: WalletFormModalProps)
         });
 
         setWallets((prev) =>
-          prev.map((wallet) => (wallet.id === optimisticWallet.id ? response.data.data : wallet)),
+          prev
+            ? prev.map((wallet) =>
+                wallet.id === optimisticWallet.id ? response.data.data : wallet,
+              )
+            : null,
         );
 
         await refreshSummary();

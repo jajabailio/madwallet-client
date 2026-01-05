@@ -1,45 +1,48 @@
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect } from 'react';
+import { useCachedFetch } from '../hooks';
 import { httpService } from '../services';
 import type { Category } from '../types';
 
 interface CategoriesContextType {
   categories: Category[];
-  setCategories: React.Dispatch<React.SetStateAction<Category[]>>;
+  setCategories: React.Dispatch<React.SetStateAction<Category[] | null>>;
   loading: boolean;
-  refreshCategories: () => Promise<void>;
+  refreshCategories: (forceRefresh?: boolean) => Promise<void>;
 }
 
 const CategoriesContext = createContext<CategoriesContextType | undefined>(undefined);
 
 export const CategoriesProvider = ({ children }: { children: React.ReactNode }) => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchCategories = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await httpService<{ data: Category[] }>({
-        method: 'get',
-        url: '/categories',
-      });
-      setCategories(response.data.data);
-    } catch (error) {
-      console.error('Failed to fetch categories:', error);
-    } finally {
-      setLoading(false);
-    }
+  const fetchFn = useCallback(async () => {
+    const response = await httpService<{ data: Category[] }>({
+      method: 'get',
+      url: '/categories',
+    });
+    return response.data.data;
   }, []);
 
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
+  const { data, loading, fetch, setData } = useCachedFetch<Category[]>({
+    fetchFn,
+    cacheTimeMinutes: 10,
+  });
 
-  const refreshCategories = async () => {
-    await fetchCategories();
+  useEffect(() => {
+    fetch();
+  }, [fetch]);
+
+  const refreshCategories = async (forceRefresh = true) => {
+    await fetch(forceRefresh);
   };
 
   return (
-    <CategoriesContext.Provider value={{ categories, setCategories, loading, refreshCategories }}>
+    <CategoriesContext.Provider
+      value={{
+        categories: data ?? [],
+        setCategories: setData,
+        loading,
+        refreshCategories,
+      }}
+    >
       {children}
     </CategoriesContext.Provider>
   );

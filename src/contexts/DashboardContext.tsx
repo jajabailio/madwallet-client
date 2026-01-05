@@ -1,44 +1,46 @@
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect } from 'react';
+import { useCachedFetch } from '../hooks';
 import { httpService } from '../services';
 import type { DashboardSummary } from '../types';
 
 interface DashboardContextType {
   summary: DashboardSummary | null;
   loading: boolean;
-  refreshSummary: () => Promise<void>;
+  refreshSummary: (forceRefresh?: boolean) => Promise<void>;
 }
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
 
 export const DashboardProvider = ({ children }: { children: React.ReactNode }) => {
-  const [summary, setSummary] = useState<DashboardSummary | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  const fetchSummary = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await httpService<{ data: DashboardSummary }>({
-        method: 'get',
-        url: '/dashboard/summary',
-      });
-      setSummary(response.data.data);
-    } catch (error) {
-      console.error('Failed to fetch dashboard summary:', error);
-    } finally {
-      setLoading(false);
-    }
+  const fetchFn = useCallback(async () => {
+    const response = await httpService<{ data: DashboardSummary }>({
+      method: 'get',
+      url: '/dashboard/summary',
+    });
+    return response.data.data;
   }, []);
 
-  useEffect(() => {
-    fetchSummary();
-  }, [fetchSummary]);
+  const { data, loading, fetch } = useCachedFetch<DashboardSummary>({
+    fetchFn,
+    cacheTimeMinutes: 10,
+  });
 
-  const refreshSummary = async () => {
-    await fetchSummary();
+  useEffect(() => {
+    fetch();
+  }, [fetch]);
+
+  const refreshSummary = async (forceRefresh = true) => {
+    await fetch(forceRefresh);
   };
 
   return (
-    <DashboardContext.Provider value={{ summary, loading, refreshSummary }}>
+    <DashboardContext.Provider
+      value={{
+        summary: data,
+        loading,
+        refreshSummary,
+      }}
+    >
       {children}
     </DashboardContext.Provider>
   );

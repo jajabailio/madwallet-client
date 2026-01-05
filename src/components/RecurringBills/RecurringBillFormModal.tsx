@@ -10,8 +10,7 @@ import FormBuilder from '../form/FormBuilder';
 interface RecurringBillFormModalProps {
   open: boolean;
   onClose: () => void;
-  recurringBills: RecurringBill[];
-  setRecurringBills: React.Dispatch<React.SetStateAction<RecurringBill[]>>;
+  setRecurringBills: React.Dispatch<React.SetStateAction<RecurringBill[] | null>>;
   editingBill?: RecurringBill | null;
 }
 
@@ -31,7 +30,6 @@ const recurringBillSchema = Joi.object({
 const RecurringBillFormModal = ({
   open,
   onClose,
-  recurringBills,
   setRecurringBills,
   editingBill,
 }: RecurringBillFormModalProps) => {
@@ -65,8 +63,8 @@ const RecurringBillFormModal = ({
         });
 
         // Update the bill in the list
-        setRecurringBills(
-          recurringBills.map((bill) => (bill.id === editingBill.id ? response.data : bill)),
+        setRecurringBills((prev) =>
+          prev ? prev.map((bill) => (bill.id === editingBill.id ? response.data : bill)) : null,
         );
         toast.success('Recurring bill updated successfully!');
         onClose();
@@ -88,7 +86,7 @@ const RecurringBillFormModal = ({
           },
         });
 
-        setRecurringBills([response.data, ...recurringBills]);
+        setRecurringBills((prev) => (prev ? [response.data, ...prev] : [response.data]));
         toast.success('Recurring bill created successfully!');
         onClose();
       }

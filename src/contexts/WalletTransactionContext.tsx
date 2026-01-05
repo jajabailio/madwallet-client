@@ -1,46 +1,47 @@
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect } from 'react';
+import { useCachedFetch } from '../hooks';
 import { httpService } from '../services';
 import type { WalletTransaction } from '../types';
 
 interface WalletTransactionContextType {
   transactions: WalletTransaction[];
-  setTransactions: React.Dispatch<React.SetStateAction<WalletTransaction[]>>;
+  setTransactions: React.Dispatch<React.SetStateAction<WalletTransaction[] | null>>;
   loading: boolean;
-  refreshTransactions: () => Promise<void>;
+  refreshTransactions: (forceRefresh?: boolean) => Promise<void>;
 }
 
 const WalletTransactionContext = createContext<WalletTransactionContextType | undefined>(undefined);
 
 export const WalletTransactionProvider = ({ children }: { children: React.ReactNode }) => {
-  const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchTransactions = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await httpService<{ data: WalletTransaction[] }>({
-        method: 'get',
-        url: '/wallet-transactions',
-      });
-      setTransactions(response.data.data);
-    } catch (error) {
-      console.error('Failed to fetch transactions:', error);
-    } finally {
-      setLoading(false);
-    }
+  const fetchFn = useCallback(async () => {
+    const response = await httpService<{ data: WalletTransaction[] }>({
+      method: 'get',
+      url: '/wallet-transactions',
+    });
+    return response.data.data;
   }, []);
 
-  useEffect(() => {
-    fetchTransactions();
-  }, [fetchTransactions]);
+  const { data, loading, fetch, setData } = useCachedFetch<WalletTransaction[]>({
+    fetchFn,
+    cacheTimeMinutes: 10,
+  });
 
-  const refreshTransactions = async () => {
-    await fetchTransactions();
+  useEffect(() => {
+    fetch();
+  }, [fetch]);
+
+  const refreshTransactions = async (forceRefresh = true) => {
+    await fetch(forceRefresh);
   };
 
   return (
     <WalletTransactionContext.Provider
-      value={{ transactions, setTransactions, loading, refreshTransactions }}
+      value={{
+        transactions: data ?? [],
+        setTransactions: setData,
+        loading,
+        refreshTransactions,
+      }}
     >
       {children}
     </WalletTransactionContext.Provider>

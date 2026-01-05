@@ -115,9 +115,15 @@ const TransactionFormModal = ({ open, onClose }: TransactionFormModalProps) => {
 
       // Replace optimistic transaction with server response
       setTransactions((prev) =>
-        prev.map((t) => (t.id === optimisticTransaction.id ? response.data.data.transaction : t)),
+        prev
+          ? prev.map((t) =>
+              t.id === optimisticTransaction.id ? response.data.data.transaction : t,
+            )
+          : null,
       );
-      setWallets((prev) => prev.map((w) => (w.id === walletId ? response.data.data.wallet : w)));
+      setWallets((prev) =>
+        prev ? prev.map((w) => (w.id === walletId ? response.data.data.wallet : w)) : null,
+      );
 
       await refreshSummary();
       toast.success('Income transaction added successfully!');
@@ -219,6 +225,7 @@ const TransactionFormModal = ({ open, onClose }: TransactionFormModalProps) => {
 
       // Replace optimistic transactions with server response
       setTransactions((prev) => {
+        if (!prev) return null;
         const filtered = prev.filter(
           (t) => t.id !== optimisticTransactionFrom.id && t.id !== optimisticTransactionTo.id,
         );
@@ -226,10 +233,12 @@ const TransactionFormModal = ({ open, onClose }: TransactionFormModalProps) => {
       });
 
       setWallets((prev) =>
-        prev.map((w) => {
-          const updatedWallet = response.data.data.wallets.find((uw) => uw.id === w.id);
-          return updatedWallet || w;
-        }),
+        prev
+          ? prev.map((w) => {
+              const updatedWallet = response.data.data.wallets.find((uw) => uw.id === w.id);
+              return updatedWallet || w;
+            })
+          : null,
       );
 
       await refreshSummary();

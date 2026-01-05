@@ -1,45 +1,48 @@
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect } from 'react';
+import { useCachedFetch } from '../hooks';
 import { httpService } from '../services';
 import type { Wallet } from '../types';
 
 interface WalletContextType {
   wallets: Wallet[];
-  setWallets: React.Dispatch<React.SetStateAction<Wallet[]>>;
+  setWallets: React.Dispatch<React.SetStateAction<Wallet[] | null>>;
   loading: boolean;
-  refreshWallets: () => Promise<void>;
+  refreshWallets: (forceRefresh?: boolean) => Promise<void>;
 }
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
 export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
-  const [wallets, setWallets] = useState<Wallet[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchWallets = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await httpService<{ data: Wallet[] }>({
-        method: 'get',
-        url: '/wallets',
-      });
-      setWallets(response.data.data);
-    } catch (error) {
-      console.error('Failed to fetch wallets:', error);
-    } finally {
-      setLoading(false);
-    }
+  const fetchFn = useCallback(async () => {
+    const response = await httpService<{ data: Wallet[] }>({
+      method: 'get',
+      url: '/wallets',
+    });
+    return response.data.data;
   }, []);
 
-  useEffect(() => {
-    fetchWallets();
-  }, [fetchWallets]);
+  const { data, loading, fetch, setData } = useCachedFetch<Wallet[]>({
+    fetchFn,
+    cacheTimeMinutes: 10,
+  });
 
-  const refreshWallets = async () => {
-    await fetchWallets();
+  useEffect(() => {
+    fetch();
+  }, [fetch]);
+
+  const refreshWallets = async (forceRefresh = true) => {
+    await fetch(forceRefresh);
   };
 
   return (
-    <WalletContext.Provider value={{ wallets, setWallets, loading, refreshWallets }}>
+    <WalletContext.Provider
+      value={{
+        wallets: data ?? [],
+        setWallets: setData,
+        loading,
+        refreshWallets,
+      }}
+    >
       {children}
     </WalletContext.Provider>
   );

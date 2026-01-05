@@ -1,44 +1,46 @@
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect } from 'react';
+import { useCachedFetch } from '../hooks';
 import { httpService } from '../services';
 import type { Purchase } from '../types';
 
 interface PurchasesContextType {
   purchases: Purchase[];
   loading: boolean;
-  refreshPurchases: () => Promise<void>;
+  refreshPurchases: (forceRefresh?: boolean) => Promise<void>;
 }
 
 const PurchasesContext = createContext<PurchasesContextType | undefined>(undefined);
 
 export const PurchasesProvider = ({ children }: { children: React.ReactNode }) => {
-  const [purchases, setPurchases] = useState<Purchase[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchPurchases = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await httpService<{ data: Purchase[] }>({
-        method: 'get',
-        url: '/purchases',
-      });
-      setPurchases(response.data.data);
-    } catch (error) {
-      console.error('Failed to fetch purchases:', error);
-    } finally {
-      setLoading(false);
-    }
+  const fetchFn = useCallback(async () => {
+    const response = await httpService<{ data: Purchase[] }>({
+      method: 'get',
+      url: '/purchases',
+    });
+    return response.data.data;
   }, []);
 
-  useEffect(() => {
-    fetchPurchases();
-  }, [fetchPurchases]);
+  const { data, loading, fetch } = useCachedFetch<Purchase[]>({
+    fetchFn,
+    cacheTimeMinutes: 10,
+  });
 
-  const refreshPurchases = async () => {
-    await fetchPurchases();
+  useEffect(() => {
+    fetch();
+  }, [fetch]);
+
+  const refreshPurchases = async (forceRefresh = true) => {
+    await fetch(forceRefresh);
   };
 
   return (
-    <PurchasesContext.Provider value={{ purchases, loading, refreshPurchases }}>
+    <PurchasesContext.Provider
+      value={{
+        purchases: data ?? [],
+        loading,
+        refreshPurchases,
+      }}
+    >
       {children}
     </PurchasesContext.Provider>
   );

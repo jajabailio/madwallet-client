@@ -1,44 +1,46 @@
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect } from 'react';
+import { useCachedFetch } from '../hooks';
 import { httpService } from '../services';
 import type { Status } from '../types';
 
 interface StatusesContextType {
   statuses: Status[];
   loading: boolean;
-  refreshStatuses: () => Promise<void>;
+  refreshStatuses: (forceRefresh?: boolean) => Promise<void>;
 }
 
 const StatusesContext = createContext<StatusesContextType | undefined>(undefined);
 
 export const StatusesProvider = ({ children }: { children: React.ReactNode }) => {
-  const [statuses, setStatuses] = useState<Status[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchStatuses = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await httpService<{ data: Status[] }>({
-        method: 'get',
-        url: '/statuses',
-      });
-      setStatuses(response.data.data);
-    } catch (error) {
-      console.error('Failed to fetch statuses:', error);
-    } finally {
-      setLoading(false);
-    }
+  const fetchFn = useCallback(async () => {
+    const response = await httpService<{ data: Status[] }>({
+      method: 'get',
+      url: '/statuses',
+    });
+    return response.data.data;
   }, []);
 
-  useEffect(() => {
-    fetchStatuses();
-  }, [fetchStatuses]);
+  const { data, loading, fetch } = useCachedFetch<Status[]>({
+    fetchFn,
+    cacheTimeMinutes: 10,
+  });
 
-  const refreshStatuses = async () => {
-    await fetchStatuses();
+  useEffect(() => {
+    fetch();
+  }, [fetch]);
+
+  const refreshStatuses = async (forceRefresh = true) => {
+    await fetch(forceRefresh);
   };
 
   return (
-    <StatusesContext.Provider value={{ statuses, loading, refreshStatuses }}>
+    <StatusesContext.Provider
+      value={{
+        statuses: data ?? [],
+        loading,
+        refreshStatuses,
+      }}
+    >
       {children}
     </StatusesContext.Provider>
   );

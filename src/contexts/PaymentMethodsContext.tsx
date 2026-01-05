@@ -1,44 +1,46 @@
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect } from 'react';
+import { useCachedFetch } from '../hooks';
 import { httpService } from '../services';
 import type { PaymentMethod } from '../types';
 
 interface PaymentMethodsContextType {
   paymentMethods: PaymentMethod[];
   loading: boolean;
-  refreshPaymentMethods: () => Promise<void>;
+  refreshPaymentMethods: (forceRefresh?: boolean) => Promise<void>;
 }
 
 const PaymentMethodsContext = createContext<PaymentMethodsContextType | undefined>(undefined);
 
 export const PaymentMethodsProvider = ({ children }: { children: React.ReactNode }) => {
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchPaymentMethods = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await httpService<{ data: PaymentMethod[] }>({
-        method: 'get',
-        url: '/payment-methods',
-      });
-      setPaymentMethods(response.data.data);
-    } catch (error) {
-      console.error('Failed to fetch payment methods:', error);
-    } finally {
-      setLoading(false);
-    }
+  const fetchFn = useCallback(async () => {
+    const response = await httpService<{ data: PaymentMethod[] }>({
+      method: 'get',
+      url: '/payment-methods',
+    });
+    return response.data.data;
   }, []);
 
-  useEffect(() => {
-    fetchPaymentMethods();
-  }, [fetchPaymentMethods]);
+  const { data, loading, fetch } = useCachedFetch<PaymentMethod[]>({
+    fetchFn,
+    cacheTimeMinutes: 10,
+  });
 
-  const refreshPaymentMethods = async () => {
-    await fetchPaymentMethods();
+  useEffect(() => {
+    fetch();
+  }, [fetch]);
+
+  const refreshPaymentMethods = async (forceRefresh = true) => {
+    await fetch(forceRefresh);
   };
 
   return (
-    <PaymentMethodsContext.Provider value={{ paymentMethods, loading, refreshPaymentMethods }}>
+    <PaymentMethodsContext.Provider
+      value={{
+        paymentMethods: data ?? [],
+        loading,
+        refreshPaymentMethods,
+      }}
+    >
       {children}
     </PaymentMethodsContext.Provider>
   );

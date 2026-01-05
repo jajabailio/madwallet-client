@@ -1,6 +1,7 @@
 import { Box, Button, CircularProgress } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useCachedFetch } from '../../hooks';
 import { httpService } from '../../services';
 import type { RecurringBill } from '../../types';
 import RecurringBillDetailsDrawer from './RecurringBillDetailsDrawer';
@@ -8,31 +9,32 @@ import RecurringBillFormModal from './RecurringBillFormModal';
 import RecurringBillList from './RecurringBillList';
 
 const RecurringBillManager = () => {
-  const [recurringBills, setRecurringBills] = useState<RecurringBill[]>([]);
-  const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingBill, setEditingBill] = useState<RecurringBill | null>(null);
   const [selectedBill, setSelectedBill] = useState<RecurringBill | null>(null);
 
-  const fetchRecurringBills = useCallback(async () => {
-    try {
-      const response = await httpService<RecurringBill[]>({
-        method: 'get',
-        url: '/recurring-bills',
-      });
-
-      setRecurringBills(response.data);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.error('Failed to fetch recurring bills:', error);
-    }
+  const fetchFn = useCallback(async () => {
+    const response = await httpService<RecurringBill[]>({
+      method: 'get',
+      url: '/recurring-bills',
+    });
+    return response.data;
   }, []);
 
-  // Fetch recurring bills on mount
+  const {
+    data: recurringBills,
+    loading,
+    fetch,
+    setData: setRecurringBills,
+  } = useCachedFetch<RecurringBill[]>({
+    fetchFn,
+    cacheTimeMinutes: 10,
+  });
+
+  // Fetch recurring bills on mount (uses cache if available)
   useEffect(() => {
-    fetchRecurringBills();
-  }, [fetchRecurringBills]);
+    fetch();
+  }, [fetch]);
 
   const handleOpenModal = () => {
     setEditingBill(null);
@@ -60,7 +62,7 @@ const RecurringBillManager = () => {
         url: `/recurring-bills/${id}`,
       });
 
-      setRecurringBills(recurringBills.filter((bill) => bill.id !== id));
+      setRecurringBills((prev) => (prev ? prev.filter((bill) => bill.id !== id) : null));
       toast.success('Recurring bill deleted successfully!');
     } catch (error) {
       toast.error('Failed to delete recurring bill');
@@ -74,6 +76,10 @@ const RecurringBillManager = () => {
 
   const handleCloseDrawer = () => {
     setSelectedBill(null);
+  };
+
+  const handleRefresh = async () => {
+    await fetch(true); // Force refresh
   };
 
   if (loading) {
@@ -96,7 +102,7 @@ const RecurringBillManager = () => {
       </Box>
 
       <RecurringBillList
-        recurringBills={recurringBills}
+        recurringBills={recurringBills ?? []}
         onEdit={handleEdit}
         onDelete={handleDelete}
         onViewDetails={handleViewDetails}
@@ -105,7 +111,6 @@ const RecurringBillManager = () => {
       <RecurringBillFormModal
         open={modalOpen}
         onClose={handleCloseModal}
-        recurringBills={recurringBills}
         setRecurringBills={setRecurringBills}
         editingBill={editingBill}
       />
@@ -114,7 +119,7 @@ const RecurringBillManager = () => {
         bill={selectedBill}
         open={!!selectedBill}
         onClose={handleCloseDrawer}
-        onRefresh={fetchRecurringBills}
+        onRefresh={handleRefresh}
       />
     </Box>
   );
