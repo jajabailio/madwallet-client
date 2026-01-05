@@ -1,5 +1,5 @@
 import { Box, Button, CircularProgress } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { httpService } from '../../services';
 import type { RecurringBill } from '../../types';
@@ -14,12 +14,7 @@ const RecurringBillManager = () => {
   const [editingBill, setEditingBill] = useState<RecurringBill | null>(null);
   const [selectedBill, setSelectedBill] = useState<RecurringBill | null>(null);
 
-  // Fetch recurring bills on mount
-  useEffect(() => {
-    fetchRecurringBills();
-  }, []);
-
-  const fetchRecurringBills = async () => {
+  const fetchRecurringBills = useCallback(async () => {
     try {
       const response = await httpService<RecurringBill[]>({
         method: 'get',
@@ -32,7 +27,12 @@ const RecurringBillManager = () => {
       setLoading(false);
       console.error('Failed to fetch recurring bills:', error);
     }
-  };
+  }, []);
+
+  // Fetch recurring bills on mount
+  useEffect(() => {
+    fetchRecurringBills();
+  }, [fetchRecurringBills]);
 
   const handleOpenModal = () => {
     setEditingBill(null);

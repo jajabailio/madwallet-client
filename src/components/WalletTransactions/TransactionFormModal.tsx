@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useDashboard, useWallets, useWalletTransactions } from '../../contexts';
 import { httpService } from '../../services';
+import type { Wallet, WalletTransaction } from '../../types';
 import FormBuilder from '../form/FormBuilder';
 
 interface TransactionFormModalProps {
@@ -97,7 +98,9 @@ const TransactionFormModal = ({ open, onClose }: TransactionFormModalProps) => {
     onClose();
 
     try {
-      const response = await httpService<{ data: any }>({
+      const response = await httpService<{
+        data: { transaction: WalletTransaction; wallet: Wallet };
+      }>({
         method: 'post',
         url: '/wallet-transactions/income',
         data: {
@@ -194,7 +197,9 @@ const TransactionFormModal = ({ open, onClose }: TransactionFormModalProps) => {
     onClose();
 
     try {
-      const response = await httpService<{ data: any }>({
+      const response = await httpService<{
+        data: { transactions: WalletTransaction[]; wallets: Wallet[] };
+      }>({
         method: 'post',
         url: '/wallet-transactions/transfer',
         data: {
@@ -216,7 +221,7 @@ const TransactionFormModal = ({ open, onClose }: TransactionFormModalProps) => {
 
       setWallets((prev) =>
         prev.map((w) => {
-          const updatedWallet = response.data.data.wallets.find((uw: any) => uw.id === w.id);
+          const updatedWallet = response.data.data.wallets.find((uw) => uw.id === w.id);
           return updatedWallet || w;
         }),
       );
@@ -268,7 +273,14 @@ const TransactionFormModal = ({ open, onClose }: TransactionFormModalProps) => {
         }
       }
     }
-  }, [open, wallets]);
+  }, [
+    open,
+    wallets,
+    incomeForm.reset, // Set default values
+    incomeForm.setValue,
+    transferForm.reset,
+    transferForm.setValue,
+  ]);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth fullScreen={fullScreen}>

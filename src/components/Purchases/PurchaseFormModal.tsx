@@ -196,7 +196,7 @@ const PurchaseFormModal = ({ open, onClose, editingPurchase }: PurchaseFormModal
         }
       }
     }
-  }, [editingPurchase, open, reset, setValue, categories, statuses, paymentMethods]);
+  }, [editingPurchase, open, reset, setValue, categories, statuses]);
 
   // Auto-adjust frequency based on installmentCount
   useEffect(() => {

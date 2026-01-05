@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { httpService } from '../services';
 import type { DashboardSummary } from '../types';
 
@@ -14,7 +14,7 @@ export const DashboardProvider = ({ children }: { children: React.ReactNode }) =
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchSummary = async () => {
+  const fetchSummary = useCallback(async () => {
     try {
       setLoading(true);
       const response = await httpService<{ data: DashboardSummary }>({
@@ -27,11 +27,11 @@ export const DashboardProvider = ({ children }: { children: React.ReactNode }) =
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchSummary();
-  }, []);
+  }, [fetchSummary]);
 
   const refreshSummary = async () => {
     await fetchSummary();

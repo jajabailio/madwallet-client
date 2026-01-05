@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { httpService } from '../services';
 import type { Status } from '../types';
 
@@ -14,7 +14,7 @@ export const StatusesProvider = ({ children }: { children: React.ReactNode }) =>
   const [statuses, setStatuses] = useState<Status[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchStatuses = async () => {
+  const fetchStatuses = useCallback(async () => {
     try {
       setLoading(true);
       const response = await httpService<{ data: Status[] }>({
@@ -27,11 +27,11 @@ export const StatusesProvider = ({ children }: { children: React.ReactNode }) =>
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchStatuses();
-  }, []);
+  }, [fetchStatuses]);
 
   const refreshStatuses = async () => {
     await fetchStatuses();

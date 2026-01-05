@@ -4,7 +4,7 @@ import PaymentIcon from '@mui/icons-material/Payment';
 import { Box, Chip, IconButton } from '@mui/material';
 import type { Expense, TTableContent } from '../../types';
 import type { TTableData } from '../../types/table';
-import { formatCurrency, formatDate, getCategoryColor } from '../../utils';
+import { formatCurrency, formatDate } from '../../utils';
 import DataTable from '../common/DataTable';
 
 interface ExpenseListProps {

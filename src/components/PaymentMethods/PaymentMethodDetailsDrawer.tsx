@@ -12,7 +12,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import httpService from '../../services/httpService';
 import type { Expense, PaymentMethod, PaymentMethodSummary } from '../../types';
 import { formatCurrency, formatDate, groupExpensesByMonth } from '../../utils';
@@ -33,17 +33,7 @@ const PaymentMethodDetailsDrawer = ({
   const [summary, setSummary] = useState<PaymentMethodSummary | null>(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (open && paymentMethod) {
-      fetchData();
-    } else {
-      // Reset state when drawer closes
-      setExpenses([]);
-      setSummary(null);
-    }
-  }, [open, paymentMethod]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!paymentMethod) return;
 
     setLoading(true);
@@ -67,7 +57,17 @@ const PaymentMethodDetailsDrawer = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [paymentMethod]);
+
+  useEffect(() => {
+    if (open && paymentMethod) {
+      fetchData();
+    } else {
+      // Reset state when drawer closes
+      setExpenses([]);
+      setSummary(null);
+    }
+  }, [open, paymentMethod, fetchData]);
 
   if (!paymentMethod) return null;
 

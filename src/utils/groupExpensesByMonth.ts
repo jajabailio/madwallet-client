@@ -22,9 +22,10 @@ export const groupExpensesByMonth = (expenses: Expense[]): MonthGroup[] => {
     const monthKey = `${year}-${monthNumber}`;
 
     // Get or create month group
-    if (!monthMap.has(monthKey)) {
+    let group = monthMap.get(monthKey);
+    if (!group) {
       const monthName = date.toLocaleString('en-US', { month: 'long' });
-      monthMap.set(monthKey, {
+      group = {
         month: `${monthName} ${year}`,
         year,
         monthNumber,
@@ -33,10 +34,10 @@ export const groupExpensesByMonth = (expenses: Expense[]): MonthGroup[] => {
         totalUnpaidCents: 0,
         paidCount: 0,
         unpaidCount: 0,
-      });
+      };
+      monthMap.set(monthKey, group);
     }
 
-    const group = monthMap.get(monthKey)!;
     group.expenses.push(expense);
 
     // Aggregate based on status

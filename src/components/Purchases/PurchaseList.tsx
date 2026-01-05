@@ -1,7 +1,7 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { Box, Chip, IconButton } from '@mui/material';
-import { useCategories, useStatuses } from '../../contexts';
+import { useCategories } from '../../contexts';
 import type { Purchase, TTableContent } from '../../types';
 import type { TTableData } from '../../types/table';
 import { formatCurrency, formatDate } from '../../utils';

@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { httpService } from '../services';
 import type { Category } from '../types';
 
@@ -15,7 +15,7 @@ export const CategoriesProvider = ({ children }: { children: React.ReactNode }) 
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       setLoading(true);
       const response = await httpService<{ data: Category[] }>({
@@ -28,11 +28,11 @@ export const CategoriesProvider = ({ children }: { children: React.ReactNode }) 
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [fetchCategories]);
 
   const refreshCategories = async () => {
     await fetchCategories();

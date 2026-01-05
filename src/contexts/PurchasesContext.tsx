@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { httpService } from '../services';
 import type { Purchase } from '../types';
 
@@ -14,7 +14,7 @@ export const PurchasesProvider = ({ children }: { children: React.ReactNode }) =
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchPurchases = async () => {
+  const fetchPurchases = useCallback(async () => {
     try {
       setLoading(true);
       const response = await httpService<{ data: Purchase[] }>({
@@ -27,11 +27,11 @@ export const PurchasesProvider = ({ children }: { children: React.ReactNode }) =
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchPurchases();
-  }, []);
+  }, [fetchPurchases]);
 
   const refreshPurchases = async () => {
     await fetchPurchases();

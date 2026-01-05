@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { Box, Button, CircularProgress, IconButton, Typography } from '@mui/material';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { httpService } from '../../services';
 import type { Expense } from '../../types';
@@ -19,10 +19,24 @@ const ExpenseManager = () => {
   const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
   const [payingExpense, setPayingExpense] = useState<Expense | null>(null);
 
+  const fetchExpenses = useCallback(async () => {
+    try {
+      const response = await httpService<Expense[]>({
+        method: 'get',
+        url: '/expenses',
+      });
+      setExpenses(response.data);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error('Failed to fetch expenses:', error);
+    }
+  }, []);
+
   // Fetch expenses on mount
   useEffect(() => {
     fetchExpenses();
-  }, []);
+  }, [fetchExpenses]);
 
   // Auto-generate recurring bill expenses when month changes
   useEffect(() => {
@@ -43,21 +57,7 @@ const ExpenseManager = () => {
         // Silently fail - it's ok if there are no recurring bills or generation fails
         console.log('No recurring bills to generate for this month:', error);
       });
-  }, [selectedMonth]);
-
-  const fetchExpenses = async () => {
-    try {
-      const response = await httpService<Expense[]>({
-        method: 'get',
-        url: '/expenses',
-      });
-      setExpenses(response.data);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.error('Failed to fetch expenses:', error);
-    }
-  };
+  }, [selectedMonth, fetchExpenses]);
 
   const handleOpenModal = () => {
     setEditingExpense(null);

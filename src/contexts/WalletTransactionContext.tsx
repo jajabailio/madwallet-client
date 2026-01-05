@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { httpService } from '../services';
 import type { WalletTransaction } from '../types';
 
@@ -15,7 +15,7 @@ export const WalletTransactionProvider = ({ children }: { children: React.ReactN
   const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchTransactions = async () => {
+  const fetchTransactions = useCallback(async () => {
     try {
       setLoading(true);
       const response = await httpService<{ data: WalletTransaction[] }>({
@@ -28,11 +28,11 @@ export const WalletTransactionProvider = ({ children }: { children: React.ReactN
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchTransactions();
-  }, []);
+  }, [fetchTransactions]);
 
   const refreshTransactions = async () => {
     await fetchTransactions();

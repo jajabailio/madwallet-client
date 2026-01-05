@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { httpService } from '../services';
 import type { PaymentMethod } from '../types';
 
@@ -14,7 +14,7 @@ export const PaymentMethodsProvider = ({ children }: { children: React.ReactNode
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchPaymentMethods = async () => {
+  const fetchPaymentMethods = useCallback(async () => {
     try {
       setLoading(true);
       const response = await httpService<{ data: PaymentMethod[] }>({
@@ -27,11 +27,11 @@ export const PaymentMethodsProvider = ({ children }: { children: React.ReactNode
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchPaymentMethods();
-  }, []);
+  }, [fetchPaymentMethods]);
 
   const refreshPaymentMethods = async () => {
     await fetchPaymentMethods();
