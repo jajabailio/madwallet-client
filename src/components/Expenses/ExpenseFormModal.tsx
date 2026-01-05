@@ -91,7 +91,7 @@ const ExpenseFormModal = ({
           url: `/expenses/${editingExpense.id}`,
           data: {
             description: data.description,
-            amount: Math.round(Number(data.amount) * 100),
+            amount: Number(data.amount),
             categoryId,
             statusId,
             paymentMethodId,
@@ -141,7 +141,7 @@ const ExpenseFormModal = ({
           url: '/expenses',
           data: {
             description: data.description,
-            amount: Math.round(Number(data.amount) * 100),
+            amount: Number(data.amount),
             categoryId,
             statusId,
             paymentMethodId,
