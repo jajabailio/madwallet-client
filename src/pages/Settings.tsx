@@ -3,6 +3,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import {
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -10,6 +11,7 @@ import {
   DialogTitle,
   Divider,
   Paper,
+  Skeleton,
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
@@ -20,7 +22,7 @@ import { httpService } from '../services';
 import { styles } from './Settings.styles';
 
 const Settings = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, loading } = useAuth();
   const navigate = useNavigate();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -52,6 +54,7 @@ const Settings = () => {
       navigate('/login');
     } catch (error) {
       console.error('Failed to delete account:', error);
+      toast.error('Failed to delete account. Please try again.');
       setIsDeleting(false);
     }
   };
@@ -64,7 +67,7 @@ const Settings = () => {
       </Box>
 
       {/* User Info Section */}
-      <Paper sx={styles.section}>
+      <Paper elevation={1} sx={styles.section}>
         <Typography variant="h6" sx={styles.sectionTitle}>
           Account Information
         </Typography>
@@ -73,15 +76,23 @@ const Settings = () => {
           <Typography variant="body2" color="textSecondary">
             Name
           </Typography>
-          <Typography variant="body1">
-            {user?.firstName} {user?.lastName}
-          </Typography>
+          {loading ? (
+            <Skeleton width={150} />
+          ) : (
+            <Typography variant="body1">
+              {user?.firstName} {user?.lastName}
+            </Typography>
+          )}
         </Box>
         <Box sx={styles.infoRow}>
           <Typography variant="body2" color="textSecondary">
             Email
           </Typography>
-          <Typography variant="body1">{user?.email}</Typography>
+          {loading ? (
+            <Skeleton width={200} />
+          ) : (
+            <Typography variant="body1">{user?.email}</Typography>
+          )}
         </Box>
       </Paper>
 
@@ -113,7 +124,13 @@ const Settings = () => {
       </Paper>
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog} maxWidth="sm" fullWidth>
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={handleCloseDeleteDialog}
+        maxWidth="sm"
+        fullWidth
+        disableEscapeKeyDown={isDeleting}
+      >
         <DialogTitle sx={styles.dialogTitle}>
           <DeleteForeverIcon color="error" sx={styles.dialogIcon} />
           Delete Account?
@@ -134,14 +151,15 @@ const Settings = () => {
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={styles.dialogActions}>
-          <Button onClick={handleCloseDeleteDialog} disabled={isDeleting}>
+          <Button variant="text" onClick={handleCloseDeleteDialog} disabled={isDeleting}>
             Cancel
           </Button>
           <Button
-            onClick={handleDeleteAccount}
-            color="error"
             variant="contained"
+            color="error"
+            onClick={handleDeleteAccount}
             disabled={isDeleting}
+            startIcon={isDeleting ? <CircularProgress size={16} color="inherit" /> : undefined}
           >
             {isDeleting ? 'Deleting...' : 'Yes, Delete My Account'}
           </Button>
