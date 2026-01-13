@@ -118,7 +118,7 @@ const AuthenticatedLayout = () => {
 
         <Toolbar />
 
-        <Container maxWidth="lg" sx={{ py: 3 }}>
+        <Container maxWidth="lg" sx={{ py: 3, px: { xs: 1.5, sm: 2, md: 3 } }}>
           <SummaryBar />
 
           <Routes>
