@@ -29,6 +29,7 @@ import WalletManager from './components/Wallets/WalletManager';
 import { CoreProvider, DataProvider, useTheme as useAppTheme, useAuth } from './contexts';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
+import Settings from './pages/Settings';
 import Signup from './pages/Signup';
 
 interface AppHeaderProps {
@@ -129,6 +130,7 @@ const AuthenticatedLayout = () => {
             <Route path="/recurring-bills" element={<RecurringBillManager />} />
             <Route path="/statuses" element={<StatusManager />} />
             <Route path="/wallets" element={<WalletManager />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </Container>

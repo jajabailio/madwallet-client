@@ -5,6 +5,7 @@ import CreditCardIcon from '@mui/icons-material/CreditCard';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import EventRepeatIcon from '@mui/icons-material/EventRepeat';
 import ReceiptIcon from '@mui/icons-material/Receipt';
+import SettingsIcon from '@mui/icons-material/Settings';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import {
   Box,
@@ -37,6 +38,7 @@ const navItems: NavItem[] = [
   { label: 'Recurring Bills', path: '/recurring-bills', icon: <EventRepeatIcon /> },
   { label: 'Statuses', path: '/statuses', icon: <AssignmentIcon /> },
   { label: 'Wallets', path: '/wallets', icon: <AccountBalanceWalletIcon /> },
+  { label: 'Settings', path: '/settings', icon: <SettingsIcon /> },
 ];
 
 interface NavigationProps {
