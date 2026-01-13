@@ -11,6 +11,8 @@ interface WalletFormModalProps {
   open: boolean;
   onClose: () => void;
   editingWallet?: Wallet | null;
+  defaultType?: 'bank_account' | 'e_wallet' | 'cash' | 'savings';
+  onWalletCreated?: (wallet: Wallet) => void;
 }
 
 // Joi validation schema for wallet
@@ -23,7 +25,13 @@ const walletSchema = Joi.object({
   isActive: Joi.boolean().optional(),
 });
 
-const WalletFormModal = ({ open, onClose, editingWallet }: WalletFormModalProps) => {
+const WalletFormModal = ({
+  open,
+  onClose,
+  editingWallet,
+  defaultType,
+  onWalletCreated,
+}: WalletFormModalProps) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const { wallets, setWallets } = useWallets();
@@ -129,6 +137,11 @@ const WalletFormModal = ({ open, onClose, editingWallet }: WalletFormModalProps)
 
         await refreshSummary();
         toast.success('Wallet created successfully!');
+
+        // Call callback if provided (used when creating wallet from PaymentMethodFormModal)
+        if (onWalletCreated) {
+          onWalletCreated(response.data.data);
+        }
       } catch (error) {
         setWallets(previousWallets);
         if (error && typeof error === 'object' && 'response' in error) {
@@ -168,13 +181,13 @@ const WalletFormModal = ({ open, onClose, editingWallet }: WalletFormModalProps)
         setValue('type', editingWallet.type);
         setValue('isActive', editingWallet.isActive);
       } else {
-        setValue('type', 'bank_account');
+        setValue('type', defaultType || 'bank_account');
         setValue('balance', 0);
         setValue('currency', 'PHP');
         setValue('isActive', true);
       }
     }
-  }, [editingWallet, open, reset, setValue]);
+  }, [defaultType, editingWallet, open, reset, setValue]);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth fullScreen={fullScreen}>
