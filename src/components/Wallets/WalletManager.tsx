@@ -72,7 +72,7 @@ const WalletManager = () => {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <h1>Wallets</h1>
         <Button variant="contained" color="primary" onClick={handleOpenModal}>
