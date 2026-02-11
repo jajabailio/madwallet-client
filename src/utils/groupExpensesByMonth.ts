@@ -51,12 +51,12 @@ export const groupExpensesByMonth = (expenses: Expense[]): MonthGroup[] => {
     }
   }
 
-  // Convert to array and sort by year-month descending (newest first)
+  // Convert to array and sort by year-month ascending (earliest first)
   const monthGroups = Array.from(monthMap.values());
   monthGroups.sort((a, b) => {
     // Compare year first, then month
-    if (a.year !== b.year) return b.year - a.year;
-    return b.monthNumber - a.monthNumber;
+    if (a.year !== b.year) return a.year - b.year;
+    return a.monthNumber - b.monthNumber;
   });
 
   return monthGroups;

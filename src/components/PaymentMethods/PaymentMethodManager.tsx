@@ -1,4 +1,4 @@
-import { Box, Button, CircularProgress } from '@mui/material';
+import { Box, Button, CircularProgress, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { usePaymentMethods } from '../../contexts';
@@ -10,6 +10,8 @@ import PaymentMethodFormModal from './PaymentMethodFormModal';
 import PaymentMethodList from './PaymentMethodList';
 
 const PaymentMethodManager = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { paymentMethods, loading, refreshPaymentMethods } = usePaymentMethods();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingPaymentMethod, setEditingPaymentMethod] = useState<PaymentMethod | null>(null);
@@ -69,9 +71,20 @@ const PaymentMethodManager = () => {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <h1>Payment Methods</h1>
-        <Button variant="contained" color="primary" onClick={handleOpenModal}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: isMobile ? 'column' : 'row',
+          justifyContent: 'space-between',
+          alignItems: isMobile ? 'stretch' : 'center',
+          gap: 2,
+          mb: 3,
+        }}
+      >
+        <Typography variant={isMobile ? 'h5' : 'h4'} component="h1">
+          Payment Methods
+        </Typography>
+        <Button variant="contained" color="primary" onClick={handleOpenModal} fullWidth={isMobile}>
           Add Payment Method
         </Button>
       </Box>

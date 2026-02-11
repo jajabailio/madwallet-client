@@ -4,6 +4,8 @@ export const styles = {
   drawer: {
     width: { xs: '100vw', sm: 600 },
     p: { xs: 2, sm: 3 },
+    // Account for AppBar height on mobile (56px) and desktop (64px)
+    pt: { xs: 9, sm: 10 },
     maxHeight: '100vh',
     overflowY: 'auto',
   } as SxProps<Theme>,
@@ -19,32 +21,46 @@ export const styles = {
     mb: 3,
   } as SxProps<Theme>,
 
+  detailsSection: {
+    mb: 2,
+  } as SxProps<Theme>,
+
+  detailsGrid: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: { xs: 2, sm: 3 },
+  } as SxProps<Theme>,
+
+  detailItem: {
+    minWidth: { xs: '45%', sm: 'auto' },
+  } as SxProps<Theme>,
+
   summaryCardsGrid: {
     display: 'grid',
-    gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
-    gap: 2,
+    gridTemplateColumns: '1fr 1fr',
+    gap: { xs: 1, sm: 2 },
     mb: 3,
   } as SxProps<Theme>,
 
   summaryCard: {
-    p: 2,
+    p: { xs: 1.5, sm: 2 },
     borderRadius: 1,
     border: '1px solid',
   } as SxProps<Theme>,
 
   summaryCardLabel: {
-    fontSize: '0.75rem',
+    fontSize: { xs: '0.65rem', sm: '0.75rem' },
     fontWeight: 500,
     mb: 0.5,
   } as SxProps<Theme>,
 
   summaryCardValue: {
-    fontSize: '1.5rem',
+    fontSize: { xs: '1.1rem', sm: '1.5rem' },
     fontWeight: 'bold',
   } as SxProps<Theme>,
 
   summaryCardCount: {
-    fontSize: '0.875rem',
+    fontSize: { xs: '0.75rem', sm: '0.875rem' },
     mt: 0.5,
   } as SxProps<Theme>,
 

@@ -117,6 +117,18 @@ const DataTable = ({
               <Stack spacing={1.5}>
                 {item.rows.map((row, index) => {
                   const header = headers[index];
+
+                  // Skip if header is marked as hidden on mobile
+                  if (header.hiddenOnMobile) return null;
+
+                  // Skip if hideIfEmpty is set and content is empty
+                  const isEmpty =
+                    row.content === null ||
+                    row.content === undefined ||
+                    row.content === '-' ||
+                    row.content === '';
+                  if (header.hideIfEmpty && isEmpty) return null;
+
                   return (
                     <Box key={row.key}>
                       <Typography
